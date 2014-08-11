@@ -6,6 +6,7 @@ config = {}
 from ckanext.ldap.logic.auth.update import user_update
 from ckanext.ldap.logic.auth.create import user_create
 from ckanext.ldap.model.ldap_user import setup as model_setup
+from ckanext.ldap.lib.helpers import is_ldap_user
 
 
 class ConfigError(Exception):
@@ -22,6 +23,7 @@ class LdapPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(p.IRoutes, inherit=True)
     p.implements(p.IAuthFunctions)
+    p.implements(p.ITemplateHelpers, inherit=True)
 
     def update_config(self, config):
         """Implement IConfiguer.update_config
@@ -119,6 +121,11 @@ class LdapPlugin(p.SingletonPlugin):
         if 'ckanext-ldap-user' in pylons.session:
             del pylons.session['ckanext-ldap-user']
             pylons.session.save()
+
+    def get_helpers(self):
+        return {
+            'is_ldap_user': is_ldap_user
+        }
 
 
 def _allowed_roles(v):
