@@ -36,11 +36,6 @@ class LDAPCommand(CkanCommand):
         user = toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         self.context = {'user': user['name']}
 
-        # Set up datastore DB engine
-        self.engine = _get_engine({
-            'connection_url': pylons.config['ckan.datastore.write_url']
-        })
-
         cmd = self.args[0]
 
         if cmd == 'setup-org':
