@@ -53,3 +53,11 @@ In addition the plugin provides the following optional configuration items:
 - `ldap.search.alt`: An alternative search string for the LDAP filter. If this is present and the search using `ldap.search.filter` returns exactly 0 results, then a search using this filter will be performed. If this search returns exactly one result, then it will be accepted. You can use this for example in Active Directory to match against both username and fullname by setting `ldap.search.filter` to  'sAMAccountName={login}' and `ldap.search.alt` to 'name={login}'
                      The approach of using two separate filter strings (rather than one with an or statement) ensures that priority will always be given to the unique id match. `ldap.search.alt` however can  be used to match against more than one field. For example you could match against either the full name or the email address by setting `ldap.search.alt` to '(|(name={login})(mail={login}))'.
 - `ldap.search.alt_msg`: A message that is output to the user when the search on `ldap.search.filter` returns 0 results, and the search on `ldap.search.alt` returns more than one result. Example: 'Please use your short account name instead'.
+
+
+CLI Commands
+------------
+
+To create the organisation specified in `ldap.organization.id` use the paste command:
+
+paster --plugin=ckanext-ldap ldap setup-org -c /etc/ckan/default/development.ini
