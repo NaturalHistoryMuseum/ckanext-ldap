@@ -14,7 +14,7 @@ def user_update(context, data_dict):
     except ckan.logic.NotFound:
         pass
     # Prevent edition of LDAP users (if so configured)
-    if config['ldap.prevent_edits'] and user_obj and LdapUser.by_user_id(user_obj.id):
+    if config['ckanext.ldap.prevent_edits'] and user_obj and LdapUser.by_user_id(user_obj.id):
         return {'success': False, 'msg': _('Cannot edit LDAP users')}
     # Prevent name clashes!
     if 'name' in data_dict and user_obj and user_obj.name != data_dict['name']:

@@ -54,25 +54,32 @@ class LdapPlugin(p.SingletonPlugin):
         model_setup()
         # Our own config schema, defines required items, default values and transform functions
         schema = {
-            'ldap.uri': {'required': True},
-            'ldap.base_dn': {'required': True},
-            'ldap.search.filter': {'required': True},
-            'ldap.username': {'required': True},
-            'ldap.email': {'required': True},
-            'ldap.auth.dn': {},
-            'ldap.auth.password': {'required_if': 'ldap.auth.dn'},
-            'ldap.search.alt': {},
-            'ldap.search.alt_msg': {'required_if': 'ldap.search.alt'},
-            'ldap.fullname': {},
-            'ldap.organization.id': {},
-            'ldap.organization.role': {'default': 'member', 'validate': _allowed_roles},
-            'ldap.ckan_fallback': {'default': False, 'parse': p.toolkit.asbool},
-            'ldap.prevent_edits': {'default': False, 'parse': p.toolkit.asbool}
+            'ckanext.ldap.uri': {'required': True},
+            'ckanext.ldap.base_dn': {'required': True},
+            'ckanext.ldap.search.filter': {'required': True},
+            'ckanext.ldap.username': {'required': True},
+            'ckanext.ldap.email': {'required': True},
+            'ckanext.ldap.auth.dn': {},
+            'ckanext.ldap.auth.password': {'required_if': 'ckanext.ldap.auth.dn'},
+            'ckanext.ldap.search.alt': {},
+            'ckanext.ldap.search.alt_msg': {'required_if': 'ckanext.ldap.search.alt'},
+            'ckanext.ldap.fullname': {},
+            'ckanext.ldap.organization.id': {},
+            'ckanext.ldap.organization.role': {'default': 'member', 'validate': _allowed_roles},
+            'ckanext.ldap.ckan_fallback': {'default': False, 'parse': p.toolkit.asbool},
+            'ckanext.ldap.prevent_edits': {'default': False, 'parse': p.toolkit.asbool}
         }
         errors = []
         for i in schema:
+            v = None
             if i in main_config:
                 v = main_config[i]
+            elif i.replace('ckanext.', '') in main_config:
+                # Support ldap.* options for backwards compatibility
+                main_config[i] = main_config[i.replace('ckanext.', '')]
+                v = main_config[i]
+
+            if v:
                 if 'parse' in schema[i]:
                     v = (schema[i]['parse'])(v)
                 try:
