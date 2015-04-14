@@ -1,3 +1,4 @@
+import logging
 import pylons
 import ckan.plugins as p
 
@@ -7,6 +8,9 @@ from ckanext.ldap.logic.auth.update import user_update
 from ckanext.ldap.logic.auth.create import user_create
 from ckanext.ldap.model.ldap_user import setup as model_setup
 from ckanext.ldap.lib.helpers import is_ldap_user
+
+
+log = logging.getLogger(__name__)
 
 
 class ConfigError(Exception):
@@ -75,6 +79,8 @@ class LdapPlugin(p.SingletonPlugin):
             if i in main_config:
                 v = main_config[i]
             elif i.replace('ckanext.', '') in main_config:
+                log.warning('LDAP configuration options should be prefixed with \'ckanext.\'. ' +
+                            'Please update {0} to {1}'.format(i.replace('ckanext.', ''), i))
                 # Support ldap.* options for backwards compatibility
                 main_config[i] = main_config[i.replace('ckanext.', '')]
                 v = main_config[i]

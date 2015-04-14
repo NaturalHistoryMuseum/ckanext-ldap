@@ -55,6 +55,9 @@ In addition the plugin provides the following optional configuration items:
 - `ckanext.ldap.search.alt_msg`: A message that is output to the user when the search on `ckanext.ldap.search.filter` returns 0 results, and the search on `ckanext.ldap.search.alt` returns more than one result. Example: 'Please use your short account name instead'.
 
 
+**Note**: Configuration options wihtout the `ckanext.` prefix are deprecated and will be eventually removed. Please update your settings if you are using them.
+
+
 CLI Commands
 ------------
 
