@@ -43,12 +43,12 @@ class UserController(p.toolkit.BaseController):
                 # There is an LDAP user, but the auth is wrong. There could be a CKAN user of the
                 # same name if the LDAP user had been created later - in which case we have a
                 # conflict we can't solve.
-                if config['ldap.ckan_fallback']:
+                if config['ckanext.ldap.ckan_fallback']:
                     exists = _ckan_user_exists(login)
                     if exists['exists'] and not exists['is_ldap']:
                         return self._login_failed(error=_('Username conflict. Please contact the site administrator.'))
                 return self._login_failed(error=_('Bad username or password.'))
-            elif config['ldap.ckan_fallback']:
+            elif config['ckanext.ldap.ckan_fallback']:
                 # No LDAP user match, see if we have a CKAN user match
                 try:
                     user_dict = p.toolkit.get_action('user_show')(data_dict = {'id': login})
@@ -165,14 +165,14 @@ def _get_or_create_ldap_user(ldap_user_dict):
     ckan.model.Session.add(ldap_user)
     ckan.model.Session.commit()
     # Add the user to it's group if needed
-    if 'ldap.organization.id' in config:
+    if 'ckanext.ldap.organization.id' in config:
         p.toolkit.get_action('member_create')(
             context={'ignore_auth': True},
             data_dict={
-                'id': config['ldap.organization.id'],
+                'id': config['ckanext.ldap.organization.id'],
                 'object': user_name,
                 'object_type': 'user',
-                'capacity': config['ldap.organization.role']
+                'capacity': config['ckanext.ldap.organization.role']
             }
         )
     return user_name
@@ -184,10 +184,10 @@ def _find_ldap_user(login):
     @param login: The login to find in the LDAP database
     @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
     """
-    cnx = ldap.initialize(config['ldap.uri'])
-    if config.get('ldap.auth.dn'):
+    cnx = ldap.initialize(config['ckanext.ldap.uri'])
+    if config.get('ckanext.ldap.auth.dn'):
         try:
-            cnx.bind_s(config['ldap.auth.dn'], config['ldap.auth.password'])
+            cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
         except ldap.SERVER_DOWN:
             log.error('LDAP server is not reachable')
             return None
@@ -195,16 +195,16 @@ def _find_ldap_user(login):
             log.error('LDAP server credentials (ldap.auth.dn and ldap.auth.password) invalid')
             return None
 
-    filter_str = config['ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
-    attributes = [config['ldap.username']]
-    if 'ldap.fullname' in config:
-        attributes.append(config['ldap.fullname'])
-    if 'ldap.email' in config:
-        attributes.append(config['ldap.email'])
+    filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
+    attributes = [config['ckanext.ldap.username']]
+    if 'ckanext.ldap.fullname' in config:
+        attributes.append(config['ckanext.ldap.fullname'])
+    if 'ckanext.ldap.email' in config:
+        attributes.append(config['ckanext.ldap.email'])
     try:
         ret = _ldap_search(cnx, filter_str, attributes, non_unique='log')
-        if ret is None and 'ldap.search.alt' in config:
-            filter_str = config['ldap.search.alt'].format(login=ldap.filter.escape_filter_chars(login))
+        if ret is None and 'ckanext.ldap.search.alt' in config:
+            filter_str = config['ckanext.ldap.search.alt'].format(login=ldap.filter.escape_filter_chars(login))
             ret = _ldap_search(cnx, filter_str, attributes, non_unique='raise')
     finally:
         cnx.unbind()
@@ -226,7 +226,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
              in attributes; or None if no user was found.
     """
     try:
-        res = cnx.search_s(config['ldap.base_dn'], ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
+        res = cnx.search_s(config['ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
     except ldap.SERVER_DOWN:
         log.error('LDAP server is not reachable')
         return None
@@ -243,7 +243,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
         if non_unique == 'log':
             log.error('LDAP search.filter search returned more than one entry, ignoring. Fix the search to return only 1 or 0 results.')
         elif non_unique == 'raise':
-            raise MultipleMatchError(config['ldap.search.alt_msg'])
+            raise MultipleMatchError(config['ckanext.ldap.search.alt_msg'])
         return None
     elif len(res) == 1:
         cn = res[0][0]
@@ -254,13 +254,13 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
 
         # Check required fields
         for i in ['username', 'email']:
-            cname = 'ldap.' + i
+            cname = 'ckanext.ldap.' + i
             if config[cname] not in attr or not attr[config[cname]]:
                 log.error('LDAP search did not return a {}.'.format(i))
                 return None
         # Set return dict
         for i in ['username', 'fullname', 'email', 'about']:
-            cname = 'ldap.' + i
+            cname = 'ckanext.ldap.' + i
             if cname in config and config[cname] in attr:
                 v = attr[config[cname]]
                 if v:
@@ -277,7 +277,7 @@ def _check_ldap_password(cn, password):
     @param password: Password for cn
     @return: True on success, False on failure
     """
-    cnx = ldap.initialize(config['ldap.uri'])
+    cnx = ldap.initialize(config['ckanext.ldap.uri'])
     try:
         cnx.bind_s(cn, password)
     except ldap.SERVER_DOWN:
