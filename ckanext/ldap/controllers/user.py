@@ -185,7 +185,7 @@ def _find_ldap_user(login):
     @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
     """
     cnx = ldap.initialize(config['ldap.uri'])
-    if config['ldap.auth.dn']:
+    if config.get('ldap.auth.dn'):
         try:
             cnx.bind_s(config['ldap.auth.dn'], config['ldap.auth.password'])
         except ldap.SERVER_DOWN:
@@ -251,6 +251,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
         ret = {
             'cn': cn,
         }
+
         # Check required fields
         for i in ['username', 'email']:
             cname = 'ldap.' + i
@@ -283,6 +284,7 @@ def _check_ldap_password(cn, password):
         log.error('LDAP server is not reachable')
         return False
     except ldap.INVALID_CREDENTIALS:
+        log.debug('Invalid LDAP credentials')
         return False
     cnx.unbind_s()
     return True
