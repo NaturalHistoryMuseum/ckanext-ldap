@@ -192,7 +192,7 @@ def _find_ldap_user(login):
             log.error('LDAP server is not reachable')
             return None
         except ldap.INVALID_CREDENTIALS:
-            log.error('LDAP server credentials (ldap.auth.dn and ldap.auth.password) invalid')
+            log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
             return None
 
     filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
@@ -234,10 +234,10 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
         log.error('LDAP query failed. Maybe you need auth credentials for performing searches? Error returned by the server: ' + e.info)
         return None
     except (ldap.NO_SUCH_OBJECT, ldap.REFERRAL) as e:
-        log.error('LDAP distinguished name (ldap.base_dn) is malformed or does not exist.')
+        log.error('LDAP distinguished name (ckanext.ldap.base_dn) is malformed or does not exist.')
         return None
     except ldap.FILTER_ERROR:
-        log.error('LDAP filter (ldap.search) is malformed')
+        log.error('LDAP filter (ckanext.ldap.search) is malformed')
         return None
     if len(res) > 1:
         if non_unique == 'log':
