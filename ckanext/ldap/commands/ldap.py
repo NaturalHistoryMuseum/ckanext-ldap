@@ -46,7 +46,7 @@ class LDAPCommand(CkanCommand):
     def setup_org(self):
 
         # Get the organisation all users will be added to
-        organization_id = pylons.config['ldap.organization.id']
+        organization_id = pylons.config['ckanext.ldap.organization.id']
 
         try:
             toolkit.get_action('organization_show')(self.context, {'id': organization_id})
