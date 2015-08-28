@@ -18,7 +18,7 @@ ldap_user_table = Table('ldap_user', meta.metadata,
 
 def setup():
     """Model setup; ensure our table exists"""
-    if not ldap_user_table.exists() and user.exists():
+    if not ldap_user_table.exists() and user.user_table.exists():
         ldap_user_table.create()
 
 class LdapUser(domain_object.DomainObject):
