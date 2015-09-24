@@ -187,12 +187,26 @@ def _find_ldap_user(login):
     cnx = ldap.initialize(config['ckanext.ldap.uri'])
     if config.get('ckanext.ldap.auth.dn'):
         try:
-            cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
+            if config['ckanext.ldap.auth.method'] == 'SIMPLE':
+                cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
+            elif config['ckanext.ldap.auth.method'] == 'SASL':
+                if config['ckanext.ldap.auth.mechanism'] == 'DIGEST-MD5':
+                    auth_tokens = ldap.sasl.digest_md5(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
+                    cnx.sasl_interactive_bind_s("", auth_tokens)
+                else:
+                    log.error("SASL mechanism not supported: {0}".format(config['ckanext.ldap.auth.mechanism']))
+                    return None
+            else:
+                log.error("LDAP authentication method is not supported: {0}".format(config['ckanext.ldap.auth.method']))
+                return None
         except ldap.SERVER_DOWN:
             log.error('LDAP server is not reachable')
             return None
         except ldap.INVALID_CREDENTIALS:
             log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
+            return None
+        except ldap.LDAPError, e:
+            log.error("Fatal LDAP Error: {0}".format(e))
             return None
 
     filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
