@@ -15,4 +15,5 @@ setup(
         [paste.paster_command]
             ldap=ckanext.ldap.commands.ldap:LDAPCommand
 	""",
+    include_package_data=True,
 )
