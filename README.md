@@ -46,6 +46,8 @@ In addition the plugin provides the following optional configuration items:
 - `ckanext.ldap.prevent_edits`: If defined and true, this will prevent LDAP users from editing their profile. Note that there is no problem in allowing users to change their details - even their user name can be changed. But you may prefer to keep things centralized in your LDAP server. **Important**: while this prevents the operation from happening, it won't actually remove the 'edit settings' button from the dashboard. You need to do this in your own template;
 - `ckanext.ldap.auth.dn`: If your LDAP server requires authentication (eg. Active Directory), this should be the DN to use;
 - `ckanext.ldap.auth.password`: If your LDAP server requires authentication, add the password here;
+- `ckanext.ldap.auth.method`: This is the method of authentication to use, can be either SIMPLE or SASL;
+- `ckanext.ldap.auth.mechanism`: This is the SASL mechanism to use, if auth.method is set to SASL;
 - `ckanext.ldap.fullname`: The LDAP attribute to map to the user's full name;
 - `ckanext.ldap.about`: The LDAP attribute to map to the user's description;
 - `ckanext.ldap.organization.id`: If this is set, users that log in using LDAP will automatically get added to the given organization. **Warning**: Changing this parameter will only affect users that have not yet logged on. It will not modify the organization of users who have already logged on;

@@ -65,6 +65,8 @@ class LdapPlugin(p.SingletonPlugin):
             'ckanext.ldap.email': {'required': True},
             'ckanext.ldap.auth.dn': {},
             'ckanext.ldap.auth.password': {'required_if': 'ckanext.ldap.auth.dn'},
+            'ckanext.ldap.auth.method': {'default': 'SIMPLE', 'validate': _allowed_auth_methods},
+            'ckanext.ldap.auth.mechanism': {'default': 'DIGEST-MD5', 'validate': _allowed_auth_mechanisms},
             'ckanext.ldap.search.alt': {},
             'ckanext.ldap.search.alt_msg': {'required_if': 'ckanext.ldap.search.alt'},
             'ckanext.ldap.fullname': {},
@@ -145,3 +147,13 @@ def _allowed_roles(v):
     """Raise an exception if the value is not an allowed role"""
     if v not in ['member', 'editor', 'admin']:
         raise ConfigError('role must be one of "member", "editor" or "admin"')
+
+def _allowed_auth_methods(v):
+    """Raise an exception if the value is not an allowed authentication method"""
+    if v.upper() not in ['SIMPLE', 'SASL']:
+        raise ConfigError('Only SIMPLE and SASL authentication methods are supported')
+
+def _allowed_auth_mechanisms(v):
+    """Raise an exception if the value is not an allowed authentication mechanism"""
+    if v.upper() not in ['DIGEST-MD5',]:  # Only DIGEST-MD5 is supported when the auth method is SASL
+        raise ConfigError('Only DIGEST-MD5 is supported as an authentication mechanism')
