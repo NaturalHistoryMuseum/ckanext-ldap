@@ -16,4 +16,12 @@ setup(
             ldap=ckanext.ldap.commands.ldap:LDAPCommand
 	""",
     include_package_data=True,
+    message_extractors={
+        'ckanext': [
+            ('**.py', 'python', None),
+            ('**.js', 'javascript', None),
+            ('**/templates/**.html', 'ckan', None),
+        ],
+    }
+
 )

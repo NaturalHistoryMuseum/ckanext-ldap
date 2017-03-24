@@ -264,7 +264,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
             if cname in config and config[cname] in attr:
                 v = attr[config[cname]]
                 if v:
-                    ret[i] = v[0]
+                    ret[i] = v[0].decode('utf-8')
         return ret
     else:
         return None
