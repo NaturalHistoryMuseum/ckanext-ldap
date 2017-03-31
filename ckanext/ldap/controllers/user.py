@@ -5,6 +5,7 @@ import ldap, ldap.filter
 import ckan.plugins as p
 import ckan.model
 import pylons
+from contextlib import contextmanager
 
 from ckan.lib.helpers import flash_notice, flash_error
 from ckan.common import _, request
@@ -17,7 +18,15 @@ log = logging.getLogger(__name__)
 
 class MultipleMatchError(Exception):
     pass
+
 class UserConflictError(Exception):
+    pass
+
+class UnsupportedLDAPMethod(ValueError):
+    """Raised when the user tries to connect to ldap with a method not supported by ckanext-ldap
+    
+    Usually this is because they have an invalid config entry (ckanext.ldap.auth.method or
+    ckanext.ldap.auth.mechanism)"""
     pass
 
 
@@ -178,15 +187,20 @@ def _get_or_create_ldap_user(ldap_user_dict):
     return user_name
 
 
-def _find_ldap_user(login):
-    """Find the LDAP user identified by 'login' in the configured ldap database
+@contextmanager
+def _get_ldap_connection(config=config):
+    """Context manager to get an LDAP connection
 
-    @param login: The login to find in the LDAP database
-    @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
+    Sample usage:
+        with _get_ldap_connection() as cnx:
+            cnx.search_s(...)
+
+    @param config: a dict-like object with ckanext-ldap's configuration information
+    @return: an LDAP connection object
     """
-    cnx = ldap.initialize(config['ckanext.ldap.uri'])
-    if config.get('ckanext.ldap.auth.dn'):
-        try:
+    try:
+        cnx = ldap.initialize(config['ckanext.ldap.uri'])
+        if config.get('ckanext.ldap.auth.dn'):
             if config['ckanext.ldap.auth.method'] == 'SIMPLE':
                 cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
             elif config['ckanext.ldap.auth.method'] == 'SASL':
@@ -194,35 +208,43 @@ def _find_ldap_user(login):
                     auth_tokens = ldap.sasl.digest_md5(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
                     cnx.sasl_interactive_bind_s("", auth_tokens)
                 else:
-                    log.error("SASL mechanism not supported: {0}".format(config['ckanext.ldap.auth.mechanism']))
-                    return None
+                    raise UnsupportedLDAPMethod("SASL mechanism not supported: {0}".format(config['ckanext.ldap.auth.mechanism']))
             else:
-                log.error("LDAP authentication method is not supported: {0}".format(config['ckanext.ldap.auth.method']))
-                return None
-        except ldap.SERVER_DOWN:
-            log.error('LDAP server is not reachable')
-            return None
-        except ldap.INVALID_CREDENTIALS:
-            log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
-            return None
-        except ldap.LDAPError, e:
-            log.error("Fatal LDAP Error: {0}".format(e))
-            return None
-
-    filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
-    attributes = [config['ckanext.ldap.username']]
-    if 'ckanext.ldap.fullname' in config:
-        attributes.append(config['ckanext.ldap.fullname'])
-    if 'ckanext.ldap.email' in config:
-        attributes.append(config['ckanext.ldap.email'])
-    try:
-        ret = _ldap_search(cnx, filter_str, attributes, non_unique='log')
-        if ret is None and 'ckanext.ldap.search.alt' in config:
-            filter_str = config['ckanext.ldap.search.alt'].format(login=ldap.filter.escape_filter_chars(login))
-            ret = _ldap_search(cnx, filter_str, attributes, non_unique='raise')
+                raise UnsupportedLDAPMethod("LDAP authentication method is not supported: {0}".format(config['ckanext.ldap.auth.method']))
+        yield cnx
     finally:
-        cnx.unbind()
-    return ret
+        if hasattr(cnx, "unbind"):
+            cnx.unbind()
+
+
+def _find_ldap_user(login):
+    """Find the LDAP user identified by 'login' in the configured ldap database
+
+    @param login: The login to find in the LDAP database
+    @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
+    """
+    try:
+        with _get_ldap_connection() as cnx:
+            filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
+            attributes = [config['ckanext.ldap.username']]
+            if 'ckanext.ldap.fullname' in config:
+                attributes.append(config['ckanext.ldap.fullname'])
+            if 'ckanext.ldap.email' in config:
+                attributes.append(config['ckanext.ldap.email'])
+
+            ret = _ldap_search(cnx, filter_str, attributes, non_unique='log')
+            if ret is None and 'ckanext.ldap.search.alt' in config:
+                filter_str = config['ckanext.ldap.search.alt'].format(login=ldap.filter.escape_filter_chars(login))
+                ret = _ldap_search(cnx, filter_str, attributes, non_unique='raise')
+        return ret
+    except ldap.SERVER_DOWN:
+        log.error('LDAP server is not reachable')
+    except ldap.INVALID_CREDENTIALS:
+        log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
+    except ldap.LDAPError, e: # TODO update to 'except as' if this plugin doesn't support python 2.5
+        log.error("Fatal LDAP Error: {0}".format(e))
+    except UnsupportedLDAPMethod, e:
+        log.error(e.args[0])
 
 
 def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
