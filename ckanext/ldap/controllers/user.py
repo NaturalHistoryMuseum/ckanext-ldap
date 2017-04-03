@@ -137,9 +137,9 @@ def _get_or_create_ldap_user(ldap_user_dict):
     if ldap_user:
         # TODO: Update the user detail.
         return ldap_user.user.name
-    # Check whether we have a name conflict (based on the ldap name, without mapping it to allowed chars)
     user_dict = {}
     update=False
+    # Check whether we have a name conflict (based on the ldap name, without mapping it to allowed chars)
     exists = _ckan_user_exists(ldap_user_dict['username'])
     if exists['exists'] and not exists['is_ldap']:
         # If ckanext.ldap.migrate is set, update exsting user_dict.
