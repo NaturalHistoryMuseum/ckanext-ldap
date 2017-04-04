@@ -15,7 +15,7 @@ This plugin provides LDAP authentication for CKAN. Features include:
 Requirements
 ------------
 
-This plugin uses the pythton-ldap module. This available to install via pip:
+This plugin uses the python-ldap module. This available to install via pip:
 
 ```sh
   pip install python-ldap
@@ -55,9 +55,10 @@ In addition the plugin provides the following optional configuration items:
 - `ckanext.ldap.search.alt`: An alternative search string for the LDAP filter. If this is present and the search using `ckanext.ldap.search.filter` returns exactly 0 results, then a search using this filter will be performed. If this search returns exactly one result, then it will be accepted. You can use this for example in Active Directory to match against both username and fullname by setting `ckanext.ldap.search.filter` to  'sAMAccountName={login}' and `ckanext.ldap.search.alt` to 'name={login}'
                      The approach of using two separate filter strings (rather than one with an or statement) ensures that priority will always be given to the unique id match. `ckanext.ldap.search.alt` however can  be used to match against more than one field. For example you could match against either the full name or the email address by setting `ckanext.ldap.search.alt` to '(|(name={login})(mail={login}))'.
 - `ckanext.ldap.search.alt_msg`: A message that is output to the user when the search on `ckanext.ldap.search.filter` returns 0 results, and the search on `ckanext.ldap.search.alt` returns more than one result. Example: 'Please use your short account name instead'.
+-  `ckanext.ldap.migrate` :  If defined and true this will change an existing CKAN user with the same username to an LDAP user. Otherwise, an exception `UserConflictError`is raised if LDAP-login with an already existing local CKAN username is attempted. This option provides a migration path from local CKAN authentication to LDAP authentication: Rename all users to their LDAP usernames and instruct them to login with their LDAP credentials. Migration then happens transparently.
 
 
-**Note**: Configuration options wihtout the `ckanext.` prefix are deprecated and will be eventually removed. Please update your settings if you are using them.
+**Note**: Configuration options without the `ckanext.` prefix are deprecated and will be eventually removed. Please update your settings if you are using them.
 
 
 CLI Commands
