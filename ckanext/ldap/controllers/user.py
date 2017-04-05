@@ -314,5 +314,8 @@ def _check_ldap_password(cn, password):
     except ldap.INVALID_CREDENTIALS:
         log.debug('Invalid LDAP credentials')
         return False
+    if password == '':
+        log.debug('Invalid LDAP credentials')
+        return False
     cnx.unbind_s()
     return True
