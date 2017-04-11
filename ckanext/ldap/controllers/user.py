@@ -137,30 +137,44 @@ def _get_or_create_ldap_user(ldap_user_dict):
     if ldap_user:
         # TODO: Update the user detail.
         return ldap_user.user.name
+    user_dict = {}
+    update=False
     # Check whether we have a name conflict (based on the ldap name, without mapping it to allowed chars)
     exists = _ckan_user_exists(ldap_user_dict['username'])
     if exists['exists'] and not exists['is_ldap']:
-        raise UserConflictError(_('There is a username conflict. Please inform the site administrator.'))
+        # If ckanext.ldap.migrate is set, update exsting user_dict.
+        if not config['ckanext.ldap.migrate']:
+             raise UserConflictError(_('There is a username conflict. Please inform the site administrator.'))
+        else:
+            user_dict = p.toolkit.get_action('user_show')(data_dict = {'id': ldap_user_dict['username']})
+            update=True
+        
     # If a user with the same ckan name already exists but is an LDAP user, this means (given that we didn't
     # find it above) that the conflict arises from having mangled another user's LDAP name. There will not
     # however be a conflict based on what is entered in the user prompt - so we can go ahead. The current
     # user's id will just be mangled to something different.
 
-    # Now get a unique user name, and create the CKAN user and the LdapUser entry.
-    user_name = _get_unique_user_name(ldap_user_dict['username'])
-    user_dict = {
+    # Now get a unique user name (if not "migrating"), and create the CKAN user and the LdapUser entry.
+    user_name = user_dict['name'] if update else _get_unique_user_name(ldap_user_dict['username'])
+    user_dict.update({
         'name': user_name,
         'email': ldap_user_dict['email'],
         'password': str(uuid.uuid4())
-    }
+    })
     if 'fullname' in ldap_user_dict:
         user_dict['fullname'] = ldap_user_dict['fullname']
     if 'about' in ldap_user_dict:
         user_dict['about'] = ldap_user_dict['about']
-    ckan_user = p.toolkit.get_action('user_create')(
-        context={'ignore_auth': True},
-        data_dict=user_dict
-    )
+    if update:
+        ckan_user = p.toolkit.get_action('user_update')(
+            context={'ignore_auth': True},
+            data_dict=user_dict
+        )
+    else:
+        ckan_user = p.toolkit.get_action('user_create')(
+            context={'ignore_auth': True},
+            data_dict=user_dict
+        )
     ldap_user = LdapUser(user_id=ckan_user['id'], ldap_id = ldap_user_dict['username'])
     ckan.model.Session.add(ldap_user)
     ckan.model.Session.commit()
@@ -187,12 +201,26 @@ def _find_ldap_user(login):
     cnx = ldap.initialize(config['ckanext.ldap.uri'])
     if config.get('ckanext.ldap.auth.dn'):
         try:
-            cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
+            if config['ckanext.ldap.auth.method'] == 'SIMPLE':
+                cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
+            elif config['ckanext.ldap.auth.method'] == 'SASL':
+                if config['ckanext.ldap.auth.mechanism'] == 'DIGEST-MD5':
+                    auth_tokens = ldap.sasl.digest_md5(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
+                    cnx.sasl_interactive_bind_s("", auth_tokens)
+                else:
+                    log.error("SASL mechanism not supported: {0}".format(config['ckanext.ldap.auth.mechanism']))
+                    return None
+            else:
+                log.error("LDAP authentication method is not supported: {0}".format(config['ckanext.ldap.auth.method']))
+                return None
         except ldap.SERVER_DOWN:
             log.error('LDAP server is not reachable')
             return None
         except ldap.INVALID_CREDENTIALS:
             log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
+            return None
+        except ldap.LDAPError, e:
+            log.error("Fatal LDAP Error: {0}".format(e))
             return None
 
     filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
