@@ -271,7 +271,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
 
 
 def _check_ldap_password(cn, password):
-    """Checkes that the given cn/password credentials work on the given CN.
+    """Checks that the given cn/password credentials work on the given CN.
 
     @param cn: Common name to log on
     @param password: Password for cn
@@ -284,6 +284,10 @@ def _check_ldap_password(cn, password):
         log.error('LDAP server is not reachable')
         return False
     except ldap.INVALID_CREDENTIALS:
+        log.debug('Invalid LDAP credentials')
+        return False
+    # Fail on empty password
+    if password == '':
         log.debug('Invalid LDAP credentials')
         return False
     cnx.unbind_s()
