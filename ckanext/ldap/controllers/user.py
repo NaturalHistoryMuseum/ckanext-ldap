@@ -307,7 +307,7 @@ def _check_ldap_password(cn, password):
     """
     cnx = ldap.initialize(config['ckanext.ldap.uri'])
     try:
-        cnx.bind_s(cn, ldap.filter.escape_filter_chars(password))
+        cnx.bind_s(utf8_encode(cn), utf8_encode(password))
     except ldap.SERVER_DOWN:
         log.error('LDAP server is not reachable')
         return False
