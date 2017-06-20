@@ -96,12 +96,17 @@ def _ckan_user_exists(user_name):
     @param user_name: User name to check
     @return: Dictionary defining 'exists' and 'ldap'.
     """
+
+    print "**************** Anja ckan_user_exists"
     try:
         user = p.toolkit.get_action('user_show')(data_dict = {'id': user_name})
     except p.toolkit.ObjectNotFound:
         return {'exists': False, 'is_ldap': False}
 
+    print user
     ldap_user = LdapUser.by_user_id(user['id'])
+    print ldap_user
+
     if ldap_user:
         return {'exists': True, 'is_ldap': True}
     else:
@@ -133,7 +138,12 @@ def _get_or_create_ldap_user(ldap_user_dict):
     @return: The CKAN username of an existing user
     """
     # Look for existing user, and if found return it.
+    print "get_or_create"
+    print ldap_user_dict
+    print ckan.model.Session
+    print ckan.model.Session.is_active
     ldap_user = LdapUser.by_ldap_id(ldap_user_dict['username'])
+    print ldap_user
     if ldap_user:
         # TODO: Update the user detail.
         return ldap_user.user.name
@@ -162,6 +172,12 @@ def _get_or_create_ldap_user(ldap_user_dict):
         data_dict=user_dict
     )
     ldap_user = LdapUser(user_id=ckan_user['id'], ldap_id = ldap_user_dict['username'])
+
+    print ("*************** Anja after create ldap user")
+    print ldap_user
+    ckan.model.Session.is_active
+    ckan.model.Session.connection
+
     ckan.model.Session.add(ldap_user)
     ckan.model.Session.commit()
     # Add the user to it's group if needed
@@ -185,6 +201,8 @@ def _find_ldap_user(login):
     @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
     """
     cnx = ldap.initialize(config['ckanext.ldap.uri'])
+    #print "************ ANJA LDAP"
+    #print login
     if config.get('ckanext.ldap.auth.dn'):
         try:
             cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])

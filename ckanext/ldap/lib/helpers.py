@@ -13,5 +13,6 @@ def is_ldap_user():
     Help function for determining if current user is LDAP user
     @return: boolean
     """
-
+    #print "Anja is_ldap_user"
+    #print pylons.session
     return 'ckanext-ldap-user' in pylons.session

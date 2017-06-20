@@ -57,6 +57,12 @@ In addition the plugin provides the following optional configuration items:
 
 **Note**: Configuration options wihtout the `ckanext.` prefix are deprecated and will be eventually removed. Please update your settings if you are using them.
 
+API Access
+-----------
+
+curl -X POST http://127.0.0.1:5000/api/3/action/add_ckan_user -H "Authorization: <API_Key>"  -d '{"name": "<username>", "mailprefix": "edu"}'
+
+mailprefix eg "stud" or "students" or "edu" or ... - name prefix before mayor domain; eg. susi@stud.tuwien.ac.at -> prefix "stud"
 
 CLI Commands
 ------------
