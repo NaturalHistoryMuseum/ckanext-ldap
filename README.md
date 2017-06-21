@@ -59,10 +59,20 @@ In addition the plugin provides the following optional configuration items:
 
 API Access
 -----------
+- automatically create the ckan_user after successful LDAP_add:
 
-curl -X POST http://127.0.0.1:5000/api/3/action/add_ckan_user -H "Authorization: <API_Key>"  -d '{"name": "<username>", "mailprefix": "edu"}'
+curl -X POST http://127.0.0.1:5000/api/3/action/add_ckan_user -H "Authorization: <API_Key>"  -d '{"name": "<username>"}'
 
-mailprefix eg "stud" or "students" or "edu" or ... - name prefix before mayor domain; eg. susi@stud.tuwien.ac.at -> prefix "stud"
+Based on the mail adress the user will become an editor (i.e. is allowed to create and manage his own datasets) of the respective organization if applicable; organization matching is based on the following rules:
+
+ccca_orgs= [u'aau', u'ages', u'ait', u'alps', u'bayerische-akademie-der-wissenschaften', u'bfw-bundesforschungszentrum-fur-wald', u'boku', u'ccca', u'essl', u'gba', u'iiasa', u'iio', u'jr', u'oaw', u'ogm', u'tu-graz', u'tu-wien', u'uba', u'uibk', u'uma', u'uni-salzburg', u'uni-wien', u'vetmeduni', u'wegener-center', u'wifo', u'wp', u'wu', u'zamg', u'zsi',u'usertest-organization']
+
+ccca_mails = [u'aau.at',u'ages.at',u'ait.ac.at',u'alps-gmbh.com',u'badw.de',u'bfw.gv.at',u'boku.ac.at', u'ccca.ac.at', u'essl.org',u'geologie.ac.at',u'iiasa.ac.at',u'indoek.at',u'joanneum.at', u'oeaw.ac.at', u'meteorologie.at', u'tugraz.at', u'tuwien.ac.at', u'umweltbundesamt.at',u'uibk.ac.at',u'uma.or.at',u'sbg.ac.at', u'univie.ac.at',u'vetmeduni.ac.at', u'uni-graz.at', u'wifo.ac.at', u'weatherpark.com', u'wu.ac.at',u'zamg.ac.at', u'zsi.at',u'none.at']
+
+Know subdomains maybe specified as:
+
+ckanext.ldap.mail_prefix = stud, edu, students, student
+
 
 CLI Commands
 ------------

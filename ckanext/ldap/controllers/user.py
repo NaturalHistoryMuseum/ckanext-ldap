@@ -25,9 +25,12 @@ class UserController(p.toolkit.BaseController):
     def login_handler(self):
         """Action called when login in via the LDAP login form"""
         params = request.POST
+        #print params
         if 'login' in params and 'password' in params:
             login = params['login']
             password = params['password']
+            if not password: # ldap does not allow emtpy password; Anja 21.6.2017
+                self._login_failed(error=_('Please enter a username and password'))
             try:
                 ldap_user_dict = _find_ldap_user(login)
             except MultipleMatchError as e:
@@ -138,12 +141,9 @@ def _get_or_create_ldap_user(ldap_user_dict):
     @return: The CKAN username of an existing user
     """
     # Look for existing user, and if found return it.
-    print "get_or_create"
-    print ldap_user_dict
-    print ckan.model.Session
-    print ckan.model.Session.is_active
+
     ldap_user = LdapUser.by_ldap_id(ldap_user_dict['username'])
-    print ldap_user
+
     if ldap_user:
         # TODO: Update the user detail.
         return ldap_user.user.name
@@ -172,11 +172,6 @@ def _get_or_create_ldap_user(ldap_user_dict):
         data_dict=user_dict
     )
     ldap_user = LdapUser(user_id=ckan_user['id'], ldap_id = ldap_user_dict['username'])
-
-    print ("*************** Anja after create ldap user")
-    print ldap_user
-    ckan.model.Session.is_active
-    ckan.model.Session.connection
 
     ckan.model.Session.add(ldap_user)
     ckan.model.Session.commit()

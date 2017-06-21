@@ -41,8 +41,8 @@ class LdapUser(domain_object.DomainObject):
         @param user_id: CKAN user id (actual id, not name)
         @return: LdapUser object or None
         """
-        print "*********** Anja - by user_id"
-        print cls
+        #print "*********** Anja - by user_id"
+        #print cls
         obj = meta.Session.query(cls).autoflush(autoflush)\
               .filter_by(user_id=user_id).first()
         return obj
