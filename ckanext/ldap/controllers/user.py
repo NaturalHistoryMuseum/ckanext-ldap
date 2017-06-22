@@ -100,15 +100,15 @@ def _ckan_user_exists(user_name):
     @return: Dictionary defining 'exists' and 'ldap'.
     """
 
-    print "**************** Anja ckan_user_exists"
+    #print "**************** Anja ckan_user_exists"
     try:
         user = p.toolkit.get_action('user_show')(data_dict = {'id': user_name})
     except p.toolkit.ObjectNotFound:
         return {'exists': False, 'is_ldap': False}
 
-    print user
+    #print user
     ldap_user = LdapUser.by_user_id(user['id'])
-    print ldap_user
+    #print ldap_user
 
     if ldap_user:
         return {'exists': True, 'is_ldap': True}
@@ -141,7 +141,6 @@ def _get_or_create_ldap_user(ldap_user_dict):
     @return: The CKAN username of an existing user
     """
     # Look for existing user, and if found return it.
-
     ldap_user = LdapUser.by_ldap_id(ldap_user_dict['username'])
 
     if ldap_user:
