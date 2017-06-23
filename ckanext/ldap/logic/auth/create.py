@@ -15,15 +15,14 @@ def user_create(context, data_dict=None):
         # thus we enter this path only - as it looks so far - if there was an authentication problem
         # with the API KEY for the api function
         # Hence we simply return at this point
-        return {'success': False, 'msg': _('Some problem ... please verify according to error type ... :-)')}
 
+        #return {'success': False, 'msg': _('Some problem ... please verify according to error type ... :-)')}
+
+        # :-) Unfortunately we end up here when someone registers ... therefore we have to live with the error message (see above)
+        # at least so far
+        
         ldap_user_dict = _find_ldap_user(data_dict['name'].encode('utf-8'))
-        #print "************ ldap_user_dict"
-        #print ldap_user_dict
         if ldap_user_dict:
             return {'success': False, 'msg': _('An LDAP user by that name already exists')}
 
-    result = ckan_user_create(context, data_dict)
-    #print "Result create:"
-    #print result
-    return result
+    return ckan_user_create(context, data_dict)
