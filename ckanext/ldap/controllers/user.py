@@ -104,7 +104,10 @@ def _ckan_user_exists(user_name):
     try:
         user = p.toolkit.get_action('user_show')(data_dict = {'id': user_name})
     except p.toolkit.ObjectNotFound:
+        #print "Here we are"
         return {'exists': False, 'is_ldap': False}
+
+    #print "Here we are too"
 
     #print user
     ldap_user = LdapUser.by_user_id(user['id'])
@@ -209,6 +212,7 @@ def _find_ldap_user(login):
 
     filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
     attributes = [config['ckanext.ldap.username']]
+    #print "*************2"
     if 'ckanext.ldap.fullname' in config:
         attributes.append(config['ckanext.ldap.fullname'])
     if 'ckanext.ldap.email' in config:
@@ -220,6 +224,8 @@ def _find_ldap_user(login):
             ret = _ldap_search(cnx, filter_str, attributes, non_unique='raise')
     finally:
         cnx.unbind()
+
+    #print ret
     return ret
 
 
@@ -237,6 +243,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
     @return: A dictionary defining 'cn', self.ldap_username and any other attributes that were defined
              in attributes; or None if no user was found.
     """
+    #print "*** ldap search"
     try:
         res = cnx.search_s(config['ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
     except ldap.SERVER_DOWN:
@@ -251,6 +258,8 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
     except ldap.FILTER_ERROR:
         log.error('LDAP filter (ckanext.ldap.search) is malformed')
         return None
+    #print "*********** ldap search 2"
+    #print res
     if len(res) > 1:
         if non_unique == 'log':
             log.error('LDAP search.filter search returned more than one entry, ignoring. Fix the search to return only 1 or 0 results.')

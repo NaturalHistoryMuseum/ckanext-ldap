@@ -15,13 +15,16 @@ import ldap, ldap.filter
 import ckan.model as model
 import pylons
 
+from sqlalchemy import orm, types, Column, Table, ForeignKey
+
 from ckan.lib.helpers import flash_notice, flash_error
 from ckan.common import _, request
 from ckan.model.user import User
 from ckanext.ldap.plugin import config
 from ckanext.ldap.model.ldap_user import LdapUser
-
-from sqlalchemy import orm, types, Column, Table, ForeignKey
+from ckanext.ldap.controllers.user import _ldap_search
+from ckanext.ldap.controllers.user import _ckan_user_exists
+from ckanext.ldap.controllers.user import _get_unique_user_name
 
 
 ValidationError = ckan.logic.ValidationError
@@ -102,7 +105,7 @@ def add_ckan_user(context,data_dict):
     if 'about' in ldap_user_dict:
         user_dict['about'] = ldap_user_dict['about']
     ckan_user = plugins.toolkit.get_action('user_create')(
-        context={'ignore_auth': True},
+        context={'ignore_auth': False},
         data_dict=user_dict
     )
     #print "Hello2"
@@ -110,7 +113,7 @@ def add_ckan_user(context,data_dict):
     # Add the user to it's group if needed - JUST ONE LDAP SPECIFC ORGANIZATION - not for us; Anja 21.6.17
     if 'ckanext.ldap.organization.id' in config:
         plugins.toolkit.get_action('member_create')(
-            context={'ignore_auth': True},
+            context={'ignore_auth': False},
             data_dict={
                 'id': config['ckanext.ldap.organization.id'],
                 'object': user_name,
@@ -125,7 +128,7 @@ def add_ckan_user(context,data_dict):
     #print user_name
     if user_org:
         plugins.toolkit.get_action('member_create')(
-            context={'ignore_auth': True},
+            context={'ignore_auth': False},
             data_dict={
                 'id': user_org,
                 'object': user_name,
@@ -168,7 +171,7 @@ def _check_mail_org(user_email):
         # check if subdomain
         if config.get('ckanext.ldap.mail_prefix'):
             prefixes = config['ckanext.ldap.mail_prefix']
-            print prefixes
+            #print prefixes
             dot_i = mail_to_check.find('.')
             if dot_i > 0:
                 subdo = mail_to_check[0:dot_i]
@@ -186,103 +189,3 @@ def _check_mail_org(user_email):
 
     #print "leider nicht"
     return None
-
-def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
-    """Helper function to perform the actual LDAP search
-
-    @param cnx: The LDAP connection object
-    @param filter_str: The LDAP filter string
-    @param attributes: The LDAP attributes to fetch. This *must* include self.ldap_username
-    @param non_unique: What to do when there is more than one result. Can be either 'log' (log an error
-                       and return None - used to indicate that this is a configuration problem that needs
-                       to be address by the site admin, not by the current user) or 'raise' (raise an
-                       exception with a message that will be displayed to the current user - such
-                       as 'please use your unique id instead'). Other values will silently ignore the error.
-    @return: A dictionary defining 'cn', self.ldap_username and any other attributes that were defined
-             in attributes; or None if no user was found.
-    """
-    try:
-        res = cnx.search_s(config['ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
-    except ldap.SERVER_DOWN:
-        log.error('LDAP server is not reachable')
-        return None
-    except ldap.OPERATIONS_ERROR as e:
-        log.error('LDAP query failed. Maybe you need auth credentials for performing searches? Error returned by the server: ' + e.info)
-        return None
-    except (ldap.NO_SUCH_OBJECT, ldap.REFERRAL) as e:
-        log.error('LDAP distinguished name (ckanext.ldap.base_dn) is malformed or does not exist.')
-        return None
-    except ldap.FILTER_ERROR:
-        log.error('LDAP filter (ckanext.ldap.search) is malformed')
-        return None
-    if len(res) > 1:
-        if non_unique == 'log':
-            log.error('LDAP search.filter search returned more than one entry, ignoring. Fix the search to return only 1 or 0 results.')
-        elif non_unique == 'raise':
-            raise MultipleMatchError(config['ckanext.ldap.search.alt_msg'])
-        return None
-    elif len(res) == 1:
-        cn = res[0][0]
-        attr = res[0][1]
-        ret = {
-            'cn': cn,
-        }
-
-        # Check required fields
-        for i in ['username', 'email']:
-            cname = 'ckanext.ldap.' + i
-            if config[cname] not in attr or not attr[config[cname]]:
-                log.error('LDAP search did not return a {}.'.format(i))
-                return None
-        # Set return dict
-        for i in ['username', 'fullname', 'email', 'about']:
-            cname = 'ckanext.ldap.' + i
-            if cname in config and config[cname] in attr:
-                v = attr[config[cname]]
-                if v:
-                    ret[i] = v[0].decode('utf-8')
-        return ret
-    else:
-        return None
-
-def _ckan_user_exists(user_name):
-    """Check if a CKAN user name exists, and if that user is an LDAP user.
-
-    @param user_name: User name to check
-    @return: Dictionary defining 'exists' and 'ldap'.
-    """
-
-    #print "**************** Anja ckan_user_exists"
-    #print user_name
-    try:
-        user = plugins.toolkit.get_action('user_show')(data_dict = {'id': user_name})
-    except plugins.toolkit.ObjectNotFound:
-        return {'exists': False, 'is_ldap': False}
-
-    #print user
-    ldap_user = LdapUser.by_user_id(user['id'])
-    #print ldap_user
-
-    if ldap_user:
-        return {'exists': True, 'is_ldap': True}
-    else:
-        return {'exists': True, 'is_ldap': False}
-
-
-def _get_unique_user_name(base_name):
-    """Create a unique, valid, non existent user name from the given base name
-
-    @param base_name: Base name
-    @return: A valid user name not currently in use based on base_name
-    """
-    #print base_name
-    base_name = re.sub('[^-a-z0-9_]', '_', base_name.lower())
-    base_name = base_name[0:100]
-    if len(base_name) < 2:
-        base_name = (base_name + "__")[0:2]
-    count = 0
-    user_name = base_name
-    while (_ckan_user_exists(user_name))['exists']:
-        count += 1
-        user_name = "{base}{count}".format(base=base_name[0:100-len(str(count))], count=str(count))
-    return user_name
