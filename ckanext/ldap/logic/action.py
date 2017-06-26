@@ -29,11 +29,23 @@ from ckanext.ldap.controllers.user import _get_unique_user_name
 
 ValidationError = ckan.logic.ValidationError
 NotFound = ckan.logic.NotFound
+NotAuthorized = ckan.logic.NotAuthorized
+
 _check_access = ckan.logic.check_access
 _get_or_bust = ckan.logic.get_or_bust
 _get_action = ckan.logic.get_action
 
 log = logging.getLogger(__name__)
+
+def ldap_check_api_create(context,data_dict):
+
+    try:
+        _check_access('user_create', context)
+    except NotAuthorized:
+        raise ValidationError({ 'Invalid Api Key': 'Not authorized to create a user'})
+
+    return True
+
 
 def add_ckan_user(context,data_dict):
 
@@ -150,8 +162,8 @@ def add_ckan_user(context,data_dict):
         return "Hooray! User " + user_name + " successfully created in CKAN (no Organization was applicable)"
 
 def _check_mail_org(user_email):
-    ccca_orgs= [u'aau', u'ages', u'ait', u'alps', u'bayerische-akademie-der-wissenschaften', u'bfw-bundesforschungszentrum-fur-wald', u'boku', u'ccca', u'essl', u'gba', u'iiasa', u'iio', u'jr', u'oaw', u'ogm', u'tu-graz', u'tu-wien', u'uba', u'uibk', u'uma', u'uni-salzburg', u'uni-wien', u'vetmeduni', u'wegener-center', u'wifo', u'wp', u'wu', u'zamg', u'zsi']
-    ccca_mails = [u'aau.at',u'ages.at',u'ait.ac.at',u'alps-gmbh.com',u'badw.de',u'bfw.gv.at',u'boku.ac.at', u'ccca.ac.at', u'essl.org',u'geologie.ac.at',u'iiasa.ac.at',u'indoek.at',u'joanneum.at', u'oeaw.ac.at', u'meteorologie.at', u'tugraz.at', u'tuwien.ac.at', u'umweltbundesamt.at',u'uibk.ac.at',u'uma.or.at',u'sbg.ac.at', u'univie.ac.at',u'vetmeduni.ac.at', u'uni-graz.at', u'wifo.ac.at', u'weatherpark.com', u'wu.ac.at',u'zamg.ac.at', u'zsi.at']
+    ccca_orgs= [u'aau', u'ages', u'ait', u'alps', u'bayerische-akademie-der-wissenschaften', u'bfw-bundesforschungszentrum-fur-wald', u'boku', u'ccca', u'donau-uni',u'essl', u'gba', u'iiasa', u'iio', u'jr', u'oaw', u'ogm', u'tu-graz', u'tu-wien', u'uba', u'uibk', u'uma', u'uni-salzburg', u'uni-wien', u'vetmeduni', u'uni-graz', u'wifo', u'wp', u'wu', u'zamg', u'zsi', u'usertest-organization']
+    ccca_mails = [u'aau.at',u'ages.at',u'ait.ac.at',u'alps-gmbh.com',u'badw.de',u'bfw.gv.at',u'boku.ac.at', u'ccca.ac.at', u'donau-uni.ac.at', u'essl.org',u'geologie.ac.at',u'iiasa.ac.at',u'indoek.at',u'joanneum.at', u'oeaw.ac.at', u'meteorologie.at', u'tugraz.at', u'tuwien.ac.at', u'umweltbundesamt.at',u'uibk.ac.at',u'uma.or.at',u'sbg.ac.at', u'univie.ac.at',u'vetmeduni.ac.at', u'uni-graz.at', u'wifo.ac.at', u'weatherpark.com', u'wu.ac.at',u'zamg.ac.at', u'zsi.at', u'none.b.c']
 
     #print len (ccca_orgs)
     #print len(ccca_mails)

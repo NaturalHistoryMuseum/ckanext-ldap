@@ -35,7 +35,8 @@ class LdapPlugin(p.SingletonPlugin):
 
     #IActions: Add User via Curl
     def get_actions(self):
-        actions = {'add_ckan_user': action.add_ckan_user}
+        actions = {'add_ckan_user': action.add_ckan_user,
+                   'ldap_check_api_create': action.ldap_check_api_create}
         return actions
 
 
