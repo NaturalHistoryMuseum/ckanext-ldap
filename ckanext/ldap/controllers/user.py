@@ -11,6 +11,10 @@ from ckan.common import _, request
 from ckan.model.user import User
 from ckanext.ldap.plugin import config
 from ckanext.ldap.model.ldap_user import LdapUser
+from pylons import config
+
+import ckan.logic as logic
+ValidationError = logic.ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -33,6 +37,8 @@ class UserController(p.toolkit.BaseController):
             except MultipleMatchError as e:
                 # Multiple users match. Inform the user and try again.
                 return self._login_failed(notice=str(e))
+            except EnvironmentError as e:
+                return self._login_failed(error=_('Some internal problem; please try again in a few minutes'))
             if ldap_user_dict and _check_ldap_password(ldap_user_dict['cn'], password):
                 try:
                     user_name = _get_or_create_ldap_user(ldap_user_dict)
@@ -59,6 +65,7 @@ class UserController(p.toolkit.BaseController):
                 if user and user.validate_password(password):
                     return self._login_success(user.name)
                 else:
+                    #print "********* Anja 1"
                     return self._login_failed(error=_('Bad username or password.'))
             else:
                 return self._login_failed(error=_('Bad username or password.'))
@@ -190,10 +197,14 @@ def _find_ldap_user(login):
             cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
         except ldap.SERVER_DOWN:
             log.error('LDAP server is not reachable')
-            return None
+            _send_ldap_error_mail('LDAP server is not reachable')
+            raise EnvironmentError('LDAP server is not reachable')
+            #return None
         except ldap.INVALID_CREDENTIALS:
             log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
-            return None
+            _send_ldap_error_mail('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
+            raise EnvironmentError('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
+            #return None
 
     filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(login))
     attributes = [config['ckanext.ldap.username']]
@@ -277,6 +288,7 @@ def _check_ldap_password(cn, password):
     @param password: Password for cn
     @return: True on success, False on failure
     """
+
     cnx = ldap.initialize(config['ckanext.ldap.uri'])
     try:
         cnx.bind_s(cn, password)
@@ -288,3 +300,31 @@ def _check_ldap_password(cn, password):
         return False
     cnx.unbind_s()
     return True
+
+def _send_ldap_error_mail(error):
+    import smtplib
+    from email.mime.application import MIMEApplication
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.utils import COMMASPACE, formatdate
+    from os.path import basename
+
+    ldap_user_dict = None
+    send_from = 'test@sandboxdc.ccca.ac.at'
+    send_to = ['datenzentrum@ccca.ac.at']
+    subject = 'ATTENTION: Potential LDAP Problem'
+    text = error
+
+    assert isinstance(send_to, list)
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = COMMASPACE.join(send_to)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(text))
+
+    smtp = smtplib.SMTP(config.get('smtp.server'))
+    smtp.sendmail(send_from, send_to, msg.as_string())
+    smtp.quit()
