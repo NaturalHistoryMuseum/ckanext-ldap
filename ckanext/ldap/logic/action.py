@@ -68,10 +68,10 @@ def add_ckan_user(context,data_dict):
             cnx.bind_s(config['ckanext.ldap.auth.dn'], config['ckanext.ldap.auth.password'])
         except ldap.SERVER_DOWN:
             log.error('LDAP server is not reachable')
-            raise ValidationError({ 'LDAP server': 'is not reachable'})
+            raise EnvironmentError({ 'LDAP server': 'is not reachable'})
         except ldap.INVALID_CREDENTIALS:
             log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
-            raise ValidationError({ 'LDAP server': 'credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid'})
+            raise EnvironmentError({ 'LDAP server': 'credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid'})
     #print "Hello"
 
     filter_str = config['ckanext.ldap.search.filter'].format(login=ldap.filter.escape_filter_chars(data_dict['name']))
