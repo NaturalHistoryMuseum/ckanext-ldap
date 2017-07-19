@@ -13,6 +13,10 @@ from ckanext.ldap.plugin import config
 from ckanext.ldap.model.ldap_user import LdapUser
 from pylons import config
 
+import ckan.logic as logic
+ValidationError = logic.ValidationError
+
+
 log = logging.getLogger(__name__)
 
 
@@ -65,6 +69,7 @@ class UserController(p.toolkit.BaseController):
                 if user and user.validate_password(password):
                     return self._login_success(user.name)
                 else:
+                    #print "********* Anja 1"
                     return self._login_failed(error=_('Bad username or password.'))
             else:
                 return self._login_failed(error=_('Bad username or password.'))
@@ -305,6 +310,7 @@ def _check_ldap_password(cn, password):
     @param password: Password for cn
     @return: True on success, False on failure
     """
+
     cnx = ldap.initialize(config['ckanext.ldap.uri'])
     try:
         cnx.bind_s(cn, password)
@@ -326,7 +332,7 @@ def _send_ldap_error_mail(error):
     from os.path import basename
 
     ldap_user_dict = None
-    send_from = 'test@sandboxdc.ccca.ac.at'
+    send_from = 'test@data.ccca.ac.at'
     #send_from = 'anja.stemme@ccca.ac.at'
     send_to = ['datenzentrum@ccca.ac.at']
     #send_to = ['anja.stemme@ccca.ac.at']
