@@ -292,7 +292,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
             if cname in config and config[cname] in attr:
                 v = attr[config[cname]]
                 if v:
-                    ret[i] = v[0]
+                    ret[i] = _decode_utf8(v[0])
         return ret
     else:
         return None
@@ -320,3 +320,11 @@ def _check_ldap_password(cn, password):
         return False
     cnx.unbind_s()
     return True
+
+
+def _decode_utf8(s, encoding='utf-8'):
+    """ Converts str to unicode """
+    if isinstance(s, str):
+        return(unicode(s, encoding))
+    else:
+        return s
