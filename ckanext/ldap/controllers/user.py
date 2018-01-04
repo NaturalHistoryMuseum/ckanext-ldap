@@ -1,6 +1,7 @@
 import re
 import uuid
 import logging
+import sys
 import ldap, ldap.filter
 import ckan.plugins as p
 import ckan.model
@@ -198,7 +199,7 @@ def _find_ldap_user(login):
     @param login: The login to find in the LDAP database
     @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
     """
-    cnx = ldap.initialize(config['ckanext.ldap.uri'])
+    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
     if config.get('ckanext.ldap.auth.dn'):
         try:
             if config['ckanext.ldap.auth.method'] == 'SIMPLE':
@@ -292,7 +293,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
             if cname in config and config[cname] in attr:
                 v = attr[config[cname]]
                 if v:
-                    ret[i] = v[0]
+                    ret[i] = _decode_str(v[0])
         return ret
     else:
         return None
@@ -305,7 +306,7 @@ def _check_ldap_password(cn, password):
     @param password: Password for cn
     @return: True on success, False on failure
     """
-    cnx = ldap.initialize(config['ckanext.ldap.uri'])
+    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
     try:
         cnx.bind_s(cn, password)
     except ldap.SERVER_DOWN:
@@ -320,3 +321,14 @@ def _check_ldap_password(cn, password):
         return False
     cnx.unbind_s()
     return True
+
+
+def _decode_str(s, encoding='utf-8'):
+    try:
+        # this try throws NameError if this is python3
+        if isinstance(s, basestring) and isinstance(s, str):
+            return unicode(s, encoding)
+    except NameError:
+        if isinstance (s, bytes):
+            return s.decode(encoding)
+    return s

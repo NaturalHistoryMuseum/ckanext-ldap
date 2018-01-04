@@ -106,6 +106,10 @@ class LdapPlugin(p.SingletonPlugin):
                 config[i] = schema[i]['default']
         if len(errors):
             raise ConfigError("\n".join(errors))
+        # make sure all the strings in the config are unicode formatted
+        for key, value in config.iteritems():
+            if isinstance(value, str):
+                config[key] = unicode(value, encoding='utf-8')
 
     def login(self):
         """Implementation of IAuthenticator.login
