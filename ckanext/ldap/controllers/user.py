@@ -1,6 +1,7 @@
 import re
 import uuid
 import logging
+import sys
 import ldap, ldap.filter
 import ckan.plugins as p
 import ckan.model
@@ -323,8 +324,11 @@ def _check_ldap_password(cn, password):
 
 
 def _decode_str(s, encoding='utf-8'):
-    """ Converts str to unicode """
-    if isinstance(s, str):
-        return unicode(s, encoding)
-    else:
-        return s
+    try:
+        # this try throws NameError if this is python3
+        if isinstance(s, basestring) and isinstance(s, str):
+            return unicode(s, encoding)
+    except NameError:
+        if isinstance (s, bytes):
+            return s.decode(encoding)
+    return s
