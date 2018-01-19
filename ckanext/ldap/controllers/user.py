@@ -199,7 +199,13 @@ def _find_ldap_user(login):
     @param login: The login to find in the LDAP database
     @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
     """
-    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
+    # enable python-ldap debugging
+    if config.get('ckanext.ldap.enabledebugging') == 'yes':
+      ldap.set_option(ldap.OPT_DEBUG_LEVEL, 4095)
+      cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False,trace_level=2)
+    else:
+      cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
+    
     if config.get('ckanext.ldap.auth.dn'):
         try:
             if config['ckanext.ldap.auth.method'] == 'SIMPLE':
