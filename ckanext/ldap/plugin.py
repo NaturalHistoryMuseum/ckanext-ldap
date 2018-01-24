@@ -74,7 +74,9 @@ class LdapPlugin(p.SingletonPlugin):
             'ckanext.ldap.organization.role': {'default': 'member', 'validate': _allowed_roles},
             'ckanext.ldap.ckan_fallback': {'default': False, 'parse': p.toolkit.asbool},
             'ckanext.ldap.prevent_edits': {'default': False, 'parse': p.toolkit.asbool},
-            'ckanext.ldap.migrate': {'default': False, 'parse': p.toolkit.asbool}
+            'ckanext.ldap.migrate': {'default': False, 'parse': p.toolkit.asbool},
+            'ckanext.ldap.debug_level': {},
+            'ckanext.ldap.trace_level': {}
         }
         errors = []
         for i in schema:
