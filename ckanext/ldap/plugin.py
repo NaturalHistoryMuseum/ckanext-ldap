@@ -75,8 +75,8 @@ class LdapPlugin(p.SingletonPlugin):
             'ckanext.ldap.ckan_fallback': {'default': False, 'parse': p.toolkit.asbool},
             'ckanext.ldap.prevent_edits': {'default': False, 'parse': p.toolkit.asbool},
             'ckanext.ldap.migrate': {'default': False, 'parse': p.toolkit.asbool},
-            'ckanext.ldap.debug_level': {'default': '0'},
-            'ckanext.ldap.trace_level': {'default': '0'}
+            'ckanext.ldap.debug_level': {'default': '0','parse': p.toolkit.asint},
+            'ckanext.ldap.trace_level': {'default': '0','parse': p.toolkit.asint}
         }
         errors = []
         for i in schema:
