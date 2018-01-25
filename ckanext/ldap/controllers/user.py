@@ -206,7 +206,7 @@ def _find_ldap_user(login):
        ldap.set_option(ldap.OPT_DEBUG_LEVEL,0)
         
     if config['ckanext.ldap.trace_level'] != '0':
-       cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False,config['ckanext.ldap.trace_level'])
+       cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False,trace_level=config['ckanext.ldap.trace_level'])
     else:
        cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
     
