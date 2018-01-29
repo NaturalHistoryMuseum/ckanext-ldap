@@ -23,6 +23,10 @@ class UserConflictError(Exception):
 
 
 class UserController(p.toolkit.BaseController):
+
+    def __init__(self):
+        ldap.set_option(ldap.OPT_DEBUG_LEVEL, config['ckanext.ldap.debug_level'])
+
     def login_handler(self):
         """Action called when login in via the LDAP login form"""
         params = request.POST
@@ -199,7 +203,8 @@ def _find_ldap_user(login):
     @param login: The login to find in the LDAP database
     @return: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and 'email otherwise.
     """
-    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
+    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False,
+                          trace_level=config['ckanext.ldap.trace_level'])
     if config.get('ckanext.ldap.auth.dn'):
         try:
             if config['ckanext.ldap.auth.method'] == 'SIMPLE':
@@ -306,7 +311,8 @@ def _check_ldap_password(cn, password):
     @param password: Password for cn
     @return: True on success, False on failure
     """
-    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False)
+    cnx = ldap.initialize(config['ckanext.ldap.uri'], bytes_mode=False,
+                          trace_level=config['ckanext.ldap.trace_level'])
     try:
         cnx.bind_s(cn, password)
     except ldap.SERVER_DOWN:
