@@ -1,6 +1,8 @@
 ckanext-ldap
 ============
 
+[![Travis branch](https://img.shields.io/travis/NaturalHistoryMuseum/ckanext-ldap/master.svg?style=flat-square)](https://travis-ci.org/NaturalHistoryMuseum/ckanext-ldap) [![Coveralls github branch](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/master.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
+
 Overview
 --------
 
