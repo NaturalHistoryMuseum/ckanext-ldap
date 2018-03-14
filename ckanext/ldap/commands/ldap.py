@@ -6,28 +6,25 @@
 
 
 import logging
-import pylons
-from ckan.lib.cli import CkanCommand
-from ckanext.datastore.db import _get_engine
+
 from ckan.plugins import toolkit
-from ckan import logic
 
 log = logging.getLogger()
 
-class LDAPCommand(CkanCommand):
+
+class LDAPCommand(toolkit.CkanCommand):
     '''Paster function to set up the default organisation
     
-    Paster function can be included to provision scripts - otherwise, get an error after provisioning new CKAN instance
+    Paster function can be included to provision scripts - otherwise, get an error after
+    provisioning new CKAN instance
     
     Commands:
     
         paster ldap setup-org -c /etc/ckan/default/development.ini
 
-
     '''
     summary = __doc__.split(u'\n')[0]
     usage = __doc__
-
 
     def command(self):
         ''' '''
@@ -39,8 +36,12 @@ class LDAPCommand(CkanCommand):
         self._load_config()
 
         # Set up context
-        user = toolkit.get_action(u'get_site_user')({u'ignore_auth': True}, {})
-        self.context = {u'user': user[u'name']}
+        user = toolkit.get_action(u'get_site_user')({
+            u'ignore_auth': True
+            }, {})
+        self.context = {
+            u'user': user[u'name']
+            }
 
         cmd = self.args[0]
 
@@ -53,9 +54,14 @@ class LDAPCommand(CkanCommand):
         ''' '''
 
         # Get the organisation all users will be added to
-        organization_id = pylons.config[u'ckanext.ldap.organization.id']
+        organization_id = toolkit.config[u'ckanext.ldap.organization.id']
 
         try:
-            toolkit.get_action(u'organization_show')(self.context, {u'id': organization_id})
-        except logic.NotFound:
-            toolkit.get_action(u'organization_create')(self.context, {u'id': organization_id, u'name': organization_id})
+            toolkit.get_action(u'organization_show')(self.context, {
+                u'id': organization_id
+                })
+        except toolkit.ObjectNotFound:
+            toolkit.get_action(u'organization_create')(self.context, {
+                u'id': organization_id,
+                u'name': organization_id
+                })
