@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# encoding: utf-8
+#
+# This file is part of ckanext-ldap
+# Created by the Natural History Museum in London, UK
+
 import logging
 import pylons
 import ckan.plugins as p
@@ -14,14 +20,17 @@ log = logging.getLogger(__name__)
 
 
 class ConfigError(Exception):
+    ''' '''
     pass
 
 class LdapPlugin(p.SingletonPlugin):
-    """"LdapPlugin
-
+    '''"LdapPlugin
+    
     This plugin provides Ldap authentication by implementing the IAuthenticator
     interface.
-    """
+
+
+    '''
     p.implements(p.IAuthenticator)
     p.implements(p.IConfigurable)
     p.implements(p.IConfigurer)
@@ -30,137 +39,172 @@ class LdapPlugin(p.SingletonPlugin):
     p.implements(p.ITemplateHelpers, inherit=True)
 
     def update_config(self, config):
-        """Implement IConfiguer.update_config
-
+        '''Implement IConfiguer.update_config
+        
         Add our custom template to the list of templates so we can override the login form.
-        """
-        p.toolkit.add_template_directory(config, 'templates')
+
+        :param config: 
+
+        '''
+        p.toolkit.add_template_directory(config, u'templates')
 
     def before_map(self, map):
-        """Implements Iroutes.before_map
+        '''Implements Iroutes.before_map
+        
+        Add our custom login form handler
 
-        Add our custom login form handler"""
+        :param map: 
+
+        '''
         map.connect('/ldap_login_handler',
-                    controller='ckanext.ldap.controllers.user:UserController',
-                    action='login_handler')
+                    controller=u'ckanext.ldap.controllers.user:UserController',
+                    action=u'login_handler')
         return map
 
     def get_auth_functions(self):
-        """Implements IAuthFunctions.get_auth_functions"""
+        '''Implements IAuthFunctions.get_auth_functions'''
         return {
-            'user_update': user_update,
-            'user_create': user_create
+            u'user_update': user_update,
+            u'user_create': user_create
         }
 
     def configure(self, main_config):
-        """Implementation of IConfigurable.configure"""
+        '''Implementation of IConfigurable.configure
+
+        :param main_config: 
+
+        '''
         # Setup our models
         model_setup()
         # Our own config schema, defines required items, default values and transform functions
         schema = {
-            'ckanext.ldap.uri': {'required': True},
-            'ckanext.ldap.base_dn': {'required': True},
-            'ckanext.ldap.search.filter': {'required': True},
-            'ckanext.ldap.username': {'required': True},
-            'ckanext.ldap.email': {'required': True},
-            'ckanext.ldap.auth.dn': {},
-            'ckanext.ldap.auth.password': {'required_if': 'ckanext.ldap.auth.dn'},
-            'ckanext.ldap.auth.method': {'default': 'SIMPLE', 'validate': _allowed_auth_methods},
-            'ckanext.ldap.auth.mechanism': {'default': 'DIGEST-MD5', 'validate': _allowed_auth_mechanisms},
-            'ckanext.ldap.search.alt': {},
-            'ckanext.ldap.search.alt_msg': {'required_if': 'ckanext.ldap.search.alt'},
-            'ckanext.ldap.fullname': {},
-            'ckanext.ldap.organization.id': {},
-            'ckanext.ldap.organization.role': {'default': 'member', 'validate': _allowed_roles},
-            'ckanext.ldap.ckan_fallback': {'default': False, 'parse': p.toolkit.asbool},
-            'ckanext.ldap.prevent_edits': {'default': False, 'parse': p.toolkit.asbool},
-            'ckanext.ldap.migrate': {'default': False, 'parse': p.toolkit.asbool},
-            'ckanext.ldap.debug_level': {'default': 0, 'parse': p.toolkit.asint},
-            'ckanext.ldap.trace_level': {'default': 0, 'parse': p.toolkit.asint},
+            u'ckanext.ldap.uri': {u'required': True},
+            u'ckanext.ldap.base_dn': {u'required': True},
+            u'ckanext.ldap.search.filter': {u'required': True},
+            u'ckanext.ldap.username': {u'required': True},
+            u'ckanext.ldap.email': {u'required': True},
+            u'ckanext.ldap.auth.dn': {},
+            u'ckanext.ldap.auth.password': {u'required_if': u'ckanext.ldap.auth.dn'},
+            u'ckanext.ldap.auth.method': {u'default': u'SIMPLE', u'validate': _allowed_auth_methods},
+            u'ckanext.ldap.auth.mechanism': {u'default': u'DIGEST-MD5', u'validate': _allowed_auth_mechanisms},
+            u'ckanext.ldap.search.alt': {},
+            u'ckanext.ldap.search.alt_msg': {u'required_if': u'ckanext.ldap.search.alt'},
+            u'ckanext.ldap.fullname': {},
+            u'ckanext.ldap.organization.id': {},
+            u'ckanext.ldap.organization.role': {u'default': u'member', u'validate': _allowed_roles},
+            u'ckanext.ldap.ckan_fallback': {u'default': False, u'parse': p.toolkit.asbool},
+            u'ckanext.ldap.prevent_edits': {u'default': False, u'parse': p.toolkit.asbool},
+            u'ckanext.ldap.migrate': {u'default': False, u'parse': p.toolkit.asbool},
+            u'ckanext.ldap.debug_level': {u'default': 0, u'parse': p.toolkit.asint},
+            u'ckanext.ldap.trace_level': {u'default': 0, u'parse': p.toolkit.asint},
         }
         errors = []
         for i in schema:
             v = None
             if i in main_config:
                 v = main_config[i]
-            elif i.replace('ckanext.', '') in main_config:
-                log.warning('LDAP configuration options should be prefixed with \'ckanext.\'. ' +
-                            'Please update {0} to {1}'.format(i.replace('ckanext.', ''), i))
+            elif i.replace(u'ckanext.', u'') in main_config:
+                log.warning(u'LDAP configuration options should be prefixed with \'ckanext.\'. ' +
+                            u'Please update {0} to {1}'.format(i.replace(u'ckanext.', u''), i))
                 # Support ldap.* options for backwards compatibility
-                main_config[i] = main_config[i.replace('ckanext.', '')]
+                main_config[i] = main_config[i.replace(u'ckanext.', u'')]
                 v = main_config[i]
 
             if v:
-                if 'parse' in schema[i]:
-                    v = (schema[i]['parse'])(v)
+                if u'parse' in schema[i]:
+                    v = (schema[i][u'parse'])(v)
                 try:
-                    if 'validate' in schema[i]:
-                        (schema[i]['validate'])(v)
+                    if u'validate' in schema[i]:
+                        (schema[i][u'validate'])(v)
                     config[i] = v
                 except ConfigError as e:
                     errors.append(str(e))
-            elif schema[i].get('required', False):
-                errors.append('Configuration parameter {} is required'.format(i))
-            elif schema[i].get('required_if', False) and schema[i]['required_if'] in config:
-                errors.append('Configuration parameter {} is required when {} is presnt'.format(i,
-                    schema[i]['required_if']))
-            elif 'default' in schema[i]:
-                config[i] = schema[i]['default']
+            elif schema[i].get(u'required', False):
+                errors.append(u'Configuration parameter {} is required'.format(i))
+            elif schema[i].get(u'required_if', False) and schema[i][u'required_if'] in config:
+                errors.append(u'Configuration parameter {} is required when {} is presnt'.format(i,
+                    schema[i][u'required_if']))
+            elif u'default' in schema[i]:
+                config[i] = schema[i][u'default']
         if len(errors):
-            raise ConfigError("\n".join(errors))
+            raise ConfigError(u'\n'.join(errors))
         # make sure all the strings in the config are unicode formatted
         for key, value in config.iteritems():
             if isinstance(value, str):
-                config[key] = unicode(value, encoding='utf-8')
+                config[key] = unicode(value, encoding=u'utf-8')
 
     def login(self):
-        """Implementation of IAuthenticator.login
-
+        '''Implementation of IAuthenticator.login
+        
         We don't need to do anything here as we override the form & implement our own controller action
-        """
+
+
+        '''
         pass
 
     def identify(self):
-        """ Implementiation of IAuthenticator.identify
-
+        '''Implementiation of IAuthenticator.identify
+        
         Identify which user (if any) is logged in via this plugin
-        """
+
+
+        '''
         # FIXME: This breaks if the current user changes their own user name.
-        user = pylons.session.get('ckanext-ldap-user')
+        user = pylons.session.get(u'ckanext-ldap-user')
         if user:
             p.toolkit.c.user = user
 
     def logout(self):
-        """Implementation of IAuthenticator.logout"""
+        '''Implementation of IAuthenticator.logout'''
         self._delete_session_items()
 
     def abort(self, status_code, detail, headers, comment):
-        """Implementation of IAuthenticator.abort"""
+        '''Implementation of IAuthenticator.abort
+
+        :param status_code: 
+        :param detail: 
+        :param headers: 
+        :param comment: 
+
+        '''
         return status_code, detail, headers, comment
 
     def _delete_session_items(self):
-        """Delete user details stored in the session by this plugin"""
-        if 'ckanext-ldap-user' in pylons.session:
-            del pylons.session['ckanext-ldap-user']
+        '''Delete user details stored in the session by this plugin'''
+        if u'ckanext-ldap-user' in pylons.session:
+            del pylons.session[u'ckanext-ldap-user']
             pylons.session.save()
 
     def get_helpers(self):
+        ''' '''
         return {
-            'is_ldap_user': is_ldap_user
+            u'is_ldap_user': is_ldap_user
         }
 
 
 def _allowed_roles(v):
-    """Raise an exception if the value is not an allowed role"""
-    if v not in ['member', 'editor', 'admin']:
-        raise ConfigError('role must be one of "member", "editor" or "admin"')
+    '''
+
+    :param v: 
+
+    '''
+    if v not in [u'member', u'editor', u'admin']:
+        raise ConfigError(u'role must be one of "member", "editor" or "admin"')
 
 def _allowed_auth_methods(v):
-    """Raise an exception if the value is not an allowed authentication method"""
-    if v.upper() not in ['SIMPLE', 'SASL']:
-        raise ConfigError('Only SIMPLE and SASL authentication methods are supported')
+    '''
+
+    :param v: 
+
+    '''
+    if v.upper() not in [u'SIMPLE', u'SASL']:
+        raise ConfigError(u'Only SIMPLE and SASL authentication methods are supported')
 
 def _allowed_auth_mechanisms(v):
-    """Raise an exception if the value is not an allowed authentication mechanism"""
-    if v.upper() not in ['DIGEST-MD5',]:  # Only DIGEST-MD5 is supported when the auth method is SASL
-        raise ConfigError('Only DIGEST-MD5 is supported as an authentication mechanism')
+    '''
+
+    :param v: 
+
+    '''
+    if v.upper() not in [u'DIGEST-MD5',]:  # Only DIGEST-MD5 is supported when the auth method is SASL
+        raise ConfigError(u'Only DIGEST-MD5 is supported as an authentication mechanism')

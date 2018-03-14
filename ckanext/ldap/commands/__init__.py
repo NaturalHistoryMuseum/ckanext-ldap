@@ -1,18 +1,20 @@
+
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Created by 'bens3' on 2013-06-21.
-Copyright (c) 2013 'bens3'. All rights reserved.
-"""
+#
+# This file is part of ckanext-ldap
+# Created by the Natural History Museum in London, UK
 
 import sys
 import os
 
 
 def main():
+    ''' '''
     pass
 
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     main()
+
 
