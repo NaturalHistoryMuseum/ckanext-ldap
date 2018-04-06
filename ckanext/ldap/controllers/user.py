@@ -56,7 +56,7 @@ class UserController(p.toolkit.BaseController):
             elif config['ckanext.ldap.ckan_fallback']:
                 # No LDAP user match, see if we have a CKAN user match
                 try:
-                    user_dict = p.toolkit.get_action('user_show')(data_dict = {'id': login})
+                    user_dict = _get_user_dict(login)
                     # We need the model to validate the password
                     user = User.by_name(user_dict['name'])
                 except p.toolkit.ObjectNotFound:
@@ -95,6 +95,16 @@ class UserController(p.toolkit.BaseController):
         p.toolkit.redirect_to(controller='user', action='dashboard', id=user_name)
 
 
+def _get_user_dict(user_id):
+    """Calls the action API to get the detail for a user given their id
+
+    @param user_id: The user id
+    """
+    context = {'ignore_auth': True}
+    data_dict = {'id': user_id}
+    return p.toolkit.get_action('user_show')(context, data_dict)
+
+
 def _ckan_user_exists(user_name):
     """Check if a CKAN user name exists, and if that user is an LDAP user.
 
@@ -102,7 +112,8 @@ def _ckan_user_exists(user_name):
     @return: Dictionary defining 'exists' and 'ldap'.
     """
     try:
-        user = p.toolkit.get_action('user_show')(data_dict = {'id': user_name})
+
+        user = _get_user_dict(user_name)
     except p.toolkit.ObjectNotFound:
         return {'exists': False, 'is_ldap': False}
 
@@ -151,9 +162,9 @@ def _get_or_create_ldap_user(ldap_user_dict):
         if not config['ckanext.ldap.migrate']:
              raise UserConflictError(_('There is a username conflict. Please inform the site administrator.'))
         else:
-            user_dict = p.toolkit.get_action('user_show')(data_dict = {'id': ldap_user_dict['username']})
+            user_dict = _get_user_dict(ldap_user_dict['username'])
             update=True
-        
+
     # If a user with the same ckan name already exists but is an LDAP user, this means (given that we didn't
     # find it above) that the conflict arises from having mangled another user's LDAP name. There will not
     # however be a conflict based on what is entered in the user prompt - so we can go ahead. The current
