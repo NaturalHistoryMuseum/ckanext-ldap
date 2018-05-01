@@ -1,8 +1,6 @@
 {% ckan_extends %}
 
-{% set camefrom = c.login_handler.split("?")[1] | default("came_from=/dataset") %} 
-{% set camefrom = camefrom.split("=")[1] %}
-{% set action = "/ldap_login_handler?came_from="+camefrom %}
+{% set action = h.get_login_action() %}
 {% block form %}
   {% snippet "user/snippets/login_form.html", action=action, error_summary=error_summary %}
 {% endblock %}
