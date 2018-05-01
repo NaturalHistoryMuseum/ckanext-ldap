@@ -27,7 +27,7 @@ class UserController(p.toolkit.BaseController):
         ldap.set_option(ldap.OPT_DEBUG_LEVEL, config['ckanext.ldap.debug_level'])
     def login_handler(self):
         """Action called when login in via the LDAP login form"""
-        came_from = request.params['came_from']
+        came_from = request.params.get('came_from', '')
         params = request.POST
         if 'login' in params and 'password' in params:
             login = params['login']
@@ -61,7 +61,7 @@ class UserController(p.toolkit.BaseController):
                 except p.toolkit.ObjectNotFound:
                     user = None
                 if user and user.validate_password(password):
-                    return self._login_success(user.name)
+                    return self._login_success(user.name, came_from=came_from)
                 else:
                     return self._login_failed(error=_('Bad username or password.'))
             else:
@@ -82,7 +82,7 @@ class UserController(p.toolkit.BaseController):
             flash_error(error)
         p.toolkit.redirect_to(controller='user', action='login')
 
-    def _login_success(self, user_name, came_from="/dataset"):
+    def _login_success(self, user_name, came_from):
         """Handle login success
 
         Saves the user in the session and redirects to user/logged_in
@@ -92,6 +92,7 @@ class UserController(p.toolkit.BaseController):
         pylons.session['ckanext-ldap-user'] = user_name
         pylons.session.save()
         p.toolkit.redirect_to(controller='user', action='logged_in', came_from=came_from)
+        
 def _get_user_dict(user_id):
     """Calls the action API to get the detail for a user given their id
 
