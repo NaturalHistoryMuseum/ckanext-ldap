@@ -7,7 +7,7 @@ Amended: hvw / 2018
 """
 
 import pylons
-from ckan.plugins.toolkit import c
+from ckan.plugins import toolkit
 
 try:
     # In case we are running Python3
@@ -30,7 +30,7 @@ def get_login_action():
     as stored in context object's login_handler.
 
     '''
-    lh = c.login_handler
+    lh = toolkit.c.login_handler
     camefrom = parse_qs(urlparse(lh).query).get('came_from')
     if camefrom:
         action = "/ldap_login_handler?came_from=" + camefrom[0]
