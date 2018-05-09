@@ -23,12 +23,11 @@ class UserConflictError(Exception):
 
 
 class UserController(p.toolkit.BaseController):
-
     def __init__(self):
         ldap.set_option(ldap.OPT_DEBUG_LEVEL, config['ckanext.ldap.debug_level'])
-
     def login_handler(self):
         """Action called when login in via the LDAP login form"""
+        came_from = request.params.get('came_from', '')
         params = request.POST
         if 'login' in params and 'password' in params:
             login = params['login']
@@ -43,7 +42,7 @@ class UserController(p.toolkit.BaseController):
                     user_name = _get_or_create_ldap_user(ldap_user_dict)
                 except UserConflictError as e:
                     return self._login_failed(error=str(e))
-                return self._login_success(user_name)
+                return self._login_success(user_name, came_from=came_from)
             elif ldap_user_dict:
                 # There is an LDAP user, but the auth is wrong. There could be a CKAN user of the
                 # same name if the LDAP user had been created later - in which case we have a
@@ -62,7 +61,7 @@ class UserController(p.toolkit.BaseController):
                 except p.toolkit.ObjectNotFound:
                     user = None
                 if user and user.validate_password(password):
-                    return self._login_success(user.name)
+                    return self._login_success(user.name, came_from=came_from)
                 else:
                     return self._login_failed(error=_('Bad username or password.'))
             else:
@@ -83,7 +82,7 @@ class UserController(p.toolkit.BaseController):
             flash_error(error)
         p.toolkit.redirect_to(controller='user', action='login')
 
-    def _login_success(self, user_name):
+    def _login_success(self, user_name, came_from):
         """Handle login success
 
         Saves the user in the session and redirects to user/logged_in
@@ -92,9 +91,8 @@ class UserController(p.toolkit.BaseController):
         """
         pylons.session['ckanext-ldap-user'] = user_name
         pylons.session.save()
-        p.toolkit.redirect_to(controller='user', action='dashboard', id=user_name)
-
-
+        p.toolkit.redirect_to(controller='user', action='logged_in', came_from=came_from)
+        
 def _get_user_dict(user_id):
     """Calls the action API to get the detail for a user given their id
 
@@ -112,7 +110,6 @@ def _ckan_user_exists(user_name):
     @return: Dictionary defining 'exists' and 'ldap'.
     """
     try:
-
         user = _get_user_dict(user_name)
     except p.toolkit.ObjectNotFound:
         return {'exists': False, 'is_ldap': False}
@@ -164,7 +161,7 @@ def _get_or_create_ldap_user(ldap_user_dict):
         else:
             user_dict = _get_user_dict(ldap_user_dict['username'])
             update=True
-
+        
     # If a user with the same ckan name already exists but is an LDAP user, this means (given that we didn't
     # find it above) that the conflict arises from having mangled another user's LDAP name. There will not
     # however be a conflict based on what is entered in the user prompt - so we can go ahead. The current
@@ -338,8 +335,6 @@ def _check_ldap_password(cn, password):
         return False
     cnx.unbind_s()
     return True
-
-
 def _decode_str(s, encoding='utf-8'):
     try:
         # this try throws NameError if this is python3
