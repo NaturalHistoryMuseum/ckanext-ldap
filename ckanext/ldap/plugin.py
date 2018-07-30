@@ -198,6 +198,9 @@ class LdapPlugin(SingletonPlugin):
         user = session.get(u'ckanext-ldap-user')
         if user:
             toolkit.c.user = user
+        else:
+            # add the 'user' attribute to the context to avoid issue #4247
+            toolkit.c.user = None
 
     def logout(self):
         '''Implementation of IAuthenticator.logout'''
