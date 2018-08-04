@@ -1,5 +1,6 @@
 {% ckan_extends %}
 
+{% set ldap_action = h.get_login_action() %}
 {% block form %}
-  {% snippet "user/snippets/login_form.html", action="/ldap_login_handler", error_summary=error_summary %}
+  {% snippet "user/snippets/login_form.html", action=ldap_action, error_summary=error_summary %}
 {% endblock %}

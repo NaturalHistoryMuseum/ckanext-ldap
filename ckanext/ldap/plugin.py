@@ -14,7 +14,7 @@ config = {}
 from ckanext.ldap.logic.auth.update import user_update
 from ckanext.ldap.logic.auth.create import user_create
 from ckanext.ldap.model.ldap_user import setup as model_setup
-from ckanext.ldap.lib.helpers import is_ldap_user
+from ckanext.ldap.lib.helpers import is_ldap_user, get_login_action
 
 log = logging.getLogger(__name__)
 
@@ -226,8 +226,9 @@ class LdapPlugin(SingletonPlugin):
     def get_helpers(self):
         ''' '''
         return {
-            u'is_ldap_user': is_ldap_user
-            }
+            u'is_ldap_user': is_ldap_user,
+            u'get_login_action': get_login_action
+        }
 
 
 def _allowed_roles(v):

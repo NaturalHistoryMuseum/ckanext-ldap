@@ -38,6 +38,7 @@ class UserController(toolkit.BaseController):
 
     def login_handler(self):
         '''Action called when login in via the LDAP login form'''
+        came_from = toolkit.request.params.get(u'came_from', '')
         params = toolkit.request.POST
         if u'login' in params and u'password' in params:
             login = params[u'login']
@@ -52,7 +53,7 @@ class UserController(toolkit.BaseController):
                     user_name = _get_or_create_ldap_user(ldap_user_dict)
                 except UserConflictError as e:
                     return self._login_failed(error=str(e))
-                return self._login_success(user_name)
+                return self._login_success(user_name, came_from=came_from)
             elif ldap_user_dict:
                 # There is an LDAP user, but the auth is wrong. There could be a
                 # CKAN user of the same name if the LDAP user had been created
@@ -66,15 +67,13 @@ class UserController(toolkit.BaseController):
             elif config[u'ckanext.ldap.ckan_fallback']:
                 # No LDAP user match, see if we have a CKAN user match
                 try:
-                    user_dict = toolkit.get_action(u'user_show')(data_dict={
-                        u'id': login
-                        })
+                    user_dict = _get_user_dict(login)
                     # We need the model to validate the password
                     user = User.by_name(user_dict[u'name'])
                 except toolkit.ObjectNotFound:
                     user = None
                 if user and user.validate_password(password):
-                    return self._login_success(user.name)
+                    return self._login_success(user.name, came_from=came_from)
                 else:
                     return self._login_failed(
                         error=toolkit._(u'Bad username or password.'))
@@ -98,17 +97,26 @@ class UserController(toolkit.BaseController):
             toolkit.h.flash_error(error)
         toolkit.redirect_to(controller=u'user', action=u'login')
 
-    def _login_success(self, user_name):
+    def _login_success(self, user_name, came_from):
         '''Handle login success
         
         Saves the user in the session and redirects to user/logged_in
 
         :param user_name: The user name
-
         '''
         session[u'ckanext-ldap-user'] = user_name
         session.save()
-        toolkit.redirect_to(controller=u'user', action=u'dashboard', id=user_name)
+        toolkit.redirect_to(controller=u'user', action=u'logged_in', came_from=came_from)
+
+
+def _get_user_dict(user_id):
+    """Calls the action API to get the detail for a user given their id
+
+    @param user_id: The user id
+    """
+    context = {u'ignore_auth': True}
+    data_dict = {u'id': user_id}
+    return toolkit.get_action(u'user_show')(context, data_dict)
 
 
 def _ckan_user_exists(user_name):
@@ -119,9 +127,7 @@ def _ckan_user_exists(user_name):
 
     '''
     try:
-        user = toolkit.get_action(u'user_show')(data_dict={
-            u'id': user_name
-            })
+        user = _get_user_dict(user_name)
     except toolkit.ObjectNotFound:
         return {
             u'exists': False,
@@ -184,10 +190,8 @@ def _get_or_create_ldap_user(ldap_user_dict):
             raise UserConflictError(toolkit._(
                 u'There is a username conflict. Please inform the site administrator.'))
         else:
-            user_dict = toolkit.get_action(u'user_show')(data_dict={
-                u'id': ldap_user_dict[u'username']
-                })
-            update = True
+            user_dict = _get_user_dict(ldap_user_dict[u'username'])
+            update=True
 
     # If a user with the same ckan name already exists but is an LDAP user, this means
     # (given that we didn't find it above) that the conflict arises from having mangled
