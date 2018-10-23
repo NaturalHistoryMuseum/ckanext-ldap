@@ -106,7 +106,7 @@ class UserController(toolkit.BaseController):
         '''
         session[u'ckanext-ldap-user'] = user_name
         session.save()
-        toolkit.redirect_to(controller=u'user', action=u'logged_in', came_from=came_from)
+        toolkit.redirect_to(u'user.logged_in', came_from=came_from)
 
 
 def _get_user_dict(user_id):
