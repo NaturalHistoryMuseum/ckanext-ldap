@@ -37,7 +37,8 @@ Configuration of an LDAP client is always tricky. Unfortunately this really vari
 The plugin provides the following **required** configuration items:
 
 - `ckanext.ldap.uri`: The URI of the LDAP server, of the form _ldap://example.com_. You can use the URI to specify TLS (use 'ldaps' protocol), and the port number (suffix ':port');
-- `ckanext.ldap.base_dn`: The base dn in which to perform the search. Example: 'ou=USERS,dc=example,dc=com';
+- `ckanext.ldap.base_dn`: The base Dinstinguished Name (DN) in which to perform the search. Example: 'ou=USERS,dc=example,dc=com';
+- `ckanext.ldap.base_dn_alt`: The alternative DN in case you have to look in more than one Organizational Unit (OU). This item is optional, use only if needed. Example: 'ou="Other OU",dc=example,dc=com'; 
 - `ckanext.ldap.search.filter`: This is the search string that is sent to the LDAP server, in which '{login}' is replaced by the user name provided by the user. Example: 'sAMAccountName={login}'. The search performed here **must** return exactly 0 or 1 entry. See `ckanext.ldap.search.alt` to provide search on alternate fields;
 - `ckanext.ldap.username`: The LDAP attribute that will be used as the CKAN username. This **must** be unique;
 - `ckanext.ldap.email`: The LDAP attribute to map to the user's email address. This **must** be unique.
