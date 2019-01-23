@@ -86,6 +86,9 @@ class LdapPlugin(SingletonPlugin):
             u'ckanext.ldap.base_dn': {
                 u'required': True
                 },
+            u'ckanext.ldap.base_dn_alt': { 
+                u'required': False
+                },
             u'ckanext.ldap.search.filter': {
                 u'required': True
                 },
