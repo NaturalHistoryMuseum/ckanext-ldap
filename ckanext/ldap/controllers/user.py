@@ -106,7 +106,7 @@ class UserController(toolkit.BaseController):
         '''
         session[u'ckanext-ldap-user'] = user_name
         session.save()
-        toolkit.redirect_to(u'user.logged_in', came_from=came_from)
+        toolkit.redirect_to(controller=u'user', action=u'logged_in', came_from=came_from)
 
 
 def _get_user_dict(user_id):
@@ -292,18 +292,26 @@ def _find_ldap_user(login):
         attributes.append(config[u'ckanext.ldap.fullname'])
     if u'ckanext.ldap.email' in config:
         attributes.append(config[u'ckanext.ldap.email'])
+
     try:
-        ret = _ldap_search(cnx, filter_str, attributes, non_unique=u'log')
+        ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn'], non_unique=u'log')
         if ret is None and u'ckanext.ldap.search.alt' in config:
             filter_str = config[u'ckanext.ldap.search.alt'].format(
                 login=ldap.filter.escape_filter_chars(login))
-            ret = _ldap_search(cnx, filter_str, attributes, non_unique=u'raise')
+            ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn'], non_unique=u'raise')
+            if ret is None and u'ckanext.ldap.base_dn_alt' in config:
+                filter_str = config[u'ckanext.ldap.search.filter'].format(
+                login=ldap.filter.escape_filter_chars(login))
+                ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn_alt'], non_unique=u'raise')
+        elif ret is None and u'ckanext.ldap.base_dn_alt' in config:
+            ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn_alt'], non_unique=u'log')
+
     finally:
         cnx.unbind()
     return ret
 
 
-def _ldap_search(cnx, filter_str, attributes, non_unique=u'raise'):
+def _ldap_search(cnx, filter_str, attributes, base_dn_str, non_unique=u'raise'):
     '''Helper function to perform the actual LDAP search
 
     :param cnx: The LDAP connection object
@@ -321,14 +329,15 @@ def _ldap_search(cnx, filter_str, attributes, non_unique=u'raise'):
 
     '''
     try:
-        res = cnx.search_s(config[u'ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE,
+        res = cnx.search_s(base_dn_str, ldap.SCOPE_SUBTREE,
                            filterstr=filter_str, attrlist=attributes)
+        '''res = cnx.search_s(None, ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
+        '''
     except ldap.SERVER_DOWN:
         log.error(u'LDAP server is not reachable')
         return None
     except ldap.OPERATIONS_ERROR as e:
-        log.error(
-            u'LDAP query failed. Maybe you need auth credentials for performing searches? Error returned by the server: ' + e.info)
+        log.error(u'LDAP query failed. Maybe you need auth credentials for performing searches?')
         return None
     except (ldap.NO_SUCH_OBJECT, ldap.REFERRAL) as e:
         log.error(
