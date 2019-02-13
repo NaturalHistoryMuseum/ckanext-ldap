@@ -287,6 +287,8 @@ def _find_ldap_user(login):
 
     filter_str = config[u'ckanext.ldap.search.filter'].format(
         login=ldap.filter.escape_filter_chars(login))
+    filter_str_alt = config[u'ckanext.ldap.search.alt'].format(
+        login=ldap.filter.escape_filter_chars(login))
     attributes = [config[u'ckanext.ldap.username']]
     if u'ckanext.ldap.fullname' in config:
         attributes.append(config[u'ckanext.ldap.fullname'])
@@ -296,15 +298,11 @@ def _find_ldap_user(login):
     try:
         ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn'], non_unique=u'log')
         if ret is None and u'ckanext.ldap.search.alt' in config:
-            filter_str = config[u'ckanext.ldap.search.alt'].format(
-                login=ldap.filter.escape_filter_chars(login))
-            ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn'], non_unique=u'raise')
-            if ret is None and u'ckanext.ldap.base_dn_alt' in config:
-                filter_str = config[u'ckanext.ldap.search.filter'].format(
-                login=ldap.filter.escape_filter_chars(login))
-                ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn_alt'], non_unique=u'raise')
-        elif ret is None and u'ckanext.ldap.base_dn_alt' in config:
-            ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn_alt'], non_unique=u'log')
+            ret = _ldap_search(cnx, filter_str_alt, attributes, config[u'ckanext.ldap.base_dn'], non_unique=u'raise')
+        if ret is None and u'ckanext.ldap.base_dn_alt' in config:
+            ret = _ldap_search(cnx, filter_str, attributes, config[u'ckanext.ldap.base_dn_alt'], non_unique=u'log
+        if ret is None and u'ckanext.ldap.base_dn_alt' in config and u'ckanext.ldap.search.alt' in config:
+            ret = _ldap_search(cnx, filter_str_alt, attributes, config[u'ckanext.ldap.base_dn_alt'], non_unique=u'raise
 
     finally:
         cnx.unbind()
@@ -331,8 +329,7 @@ def _ldap_search(cnx, filter_str, attributes, base_dn_str, non_unique=u'raise'):
     try:
         res = cnx.search_s(base_dn_str, ldap.SCOPE_SUBTREE,
                            filterstr=filter_str, attrlist=attributes)
-        '''res = cnx.search_s(None, ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
-        '''
+
     except ldap.SERVER_DOWN:
         log.error(u'LDAP server is not reachable')
         return None
