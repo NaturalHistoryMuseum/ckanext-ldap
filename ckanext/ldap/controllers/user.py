@@ -337,16 +337,20 @@ def _ldap_search(cnx, filter_str, attributes, non_unique=u'raise'):
     except ldap.FILTER_ERROR:
         log.error(u'LDAP filter (ckanext.ldap.search) is malformed')
         return None
-    if len(res) > 1:
+    if len(res) > 1 and config[u'ckanext.ldap.use_first'] == False:
         if non_unique == u'log':
             log.error(
                 u'LDAP search.filter search returned more than one entry, ignoring. Fix the search to return only 1 or 0 results.')
         elif non_unique == u'raise':
             raise MultipleMatchError(config[u'ckanext.ldap.search.alt_msg'])
         return None
-    elif len(res) == 1:
+    elif len(res) == 1 or (len(res) >0 and config[u'ckanext.ldap.use_first'] == True):
+        cn = ''
+        attr = ''
+
         cn = res[0][0]
         attr = res[0][1]
+
         ret = {
             u'cn': cn,
             }

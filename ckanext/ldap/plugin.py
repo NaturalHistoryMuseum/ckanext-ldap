@@ -137,6 +137,10 @@ class LdapPlugin(SingletonPlugin):
                 u'default': 0,
                 u'parse': toolkit.asint
                 },
+            u'ckanext.ldap.use_first': {
+                u'default': False,
+                u'parse': toolkit.asbool
+                }
             }
         errors = []
         for i in schema:
