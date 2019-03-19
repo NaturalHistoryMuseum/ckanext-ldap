@@ -345,12 +345,8 @@ def _ldap_search(cnx, filter_str, attributes, non_unique=u'raise'):
             raise MultipleMatchError(config[u'ckanext.ldap.search.alt_msg'])
         return None
     elif len(res) == 1 or (len(res) >0 and config[u'ckanext.ldap.use_first'] == True):
-        cn = ''
-        attr = ''
-
         cn = res[0][0]
         attr = res[0][1]
-
         ret = {
             u'cn': cn,
             }
