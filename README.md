@@ -60,7 +60,7 @@ In addition the plugin provides the following optional configuration items:
 - `ckanext.ldap.migrate` :  If defined and true this will change an existing CKAN user with the same username to an LDAP user. Otherwise, an exception `UserConflictError`is raised if LDAP-login with an already existing local CKAN username is attempted. This option provides a migration path from local CKAN authentication to LDAP authentication: Rename all users to their LDAP usernames and instruct them to login with their LDAP credentials. Migration then happens transparently.
 - `ckanext.ldap.debug_level`: Default value 0 (no logging). [More information](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=debug_level#ldap.OPT_DEBUG_LEVEL).
 - `ckanext.ldap.trace_level`: Default value 0 (no logging). [More information](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=trace_level#ldap.initialize).
-
+- `ckanext.ldap.use_first`: Override the `ckanext.ldap.search.filter` to accept the first record if multiple records are returned.
 
 **Note**: Configuration options without the `ckanext.` prefix are deprecated and will be eventually removed. Please update your settings if you are using them.
 
