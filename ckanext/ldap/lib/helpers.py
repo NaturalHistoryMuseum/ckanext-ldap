@@ -29,8 +29,10 @@ def get_login_action():
     as stored in context object's login_handler.
 
     '''
-    lh = toolkit.c.login_handler
-    camefrom = parse_qs(urlparse(lh).query).get(u'came_from')
+    if hasattr(toolkit.c, 'login_handler'):
+        camefrom = parse_qs(urlparse(toolkit.c.login_handler).query).get(u'came_from')
+    else:
+        camefrom = None
     if camefrom:
         action = u'/ldap_login_handler?came_from=' + camefrom[0]
     else:
