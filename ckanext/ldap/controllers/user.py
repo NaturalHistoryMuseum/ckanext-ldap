@@ -255,6 +255,7 @@ def _find_ldap_user(login):
     '''
     cnx = ldap.initialize(config[u'ckanext.ldap.uri'], bytes_mode=False,
                           trace_level=config[u'ckanext.ldap.trace_level'])
+    cnx.set_option(ldap.OPT_NETWORK_TIMEOUT, 10)
     if config.get(u'ckanext.ldap.auth.dn'):
         try:
             if config[u'ckanext.ldap.auth.method'] == u'SIMPLE':
