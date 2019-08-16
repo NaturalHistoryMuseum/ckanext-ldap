@@ -1,5 +1,6 @@
 nose
+rednose
 mock
 httpretty
 coveralls
--e git+https://github.com/NaturalHistoryMuseum/ckan.git@ckan-upgrade-2.8.0a#egg=ckan
+-e git+https://github.com/NaturalHistoryMuseum/ckantest.git#egg=ckantest
