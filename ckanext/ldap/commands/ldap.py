@@ -13,7 +13,8 @@ log = logging.getLogger()
 
 
 class LDAPCommand(toolkit.CkanCommand):
-    '''Paster function to set up the default organisation
+    '''
+    Paster function to set up the default organisation
     
     Paster function can be included to provision scripts - otherwise, get an error after
     provisioning new CKAN instance
@@ -27,41 +28,39 @@ class LDAPCommand(toolkit.CkanCommand):
     usage = __doc__
 
     def command(self):
-        ''' '''
-
         if not self.args or self.args[0] in [u'--help', u'-h', u'help']:
             print self.__doc__
             return
 
         self._load_config()
 
-        # Set up context
-        user = toolkit.get_action(u'get_site_user')({
-            u'ignore_auth': True
-            }, {})
-        self.context = {
-            u'user': user[u'name']
-            }
-
         cmd = self.args[0]
-
         if cmd == u'setup-org':
             self.setup_org()
         else:
             print u'Command %s not recognized' % cmd
 
     def setup_org(self):
-        ''' '''
-
-        # Get the organisation all users will be added to
+        # get the organisation all users will be added to
         organization_id = toolkit.config[u'ckanext.ldap.organization.id']
 
+        # set up context
+        user = toolkit.get_action(u'get_site_user')({
+            u'ignore_auth': True
+        }, {})
+        context = {
+            u'user': user[u'name']
+        }
+
         try:
-            toolkit.get_action(u'organization_show')(self.context, {
+            toolkit.get_action(u'organization_show')(context, {
                 u'id': organization_id
-                })
+            })
         except toolkit.ObjectNotFound:
-            toolkit.get_action(u'organization_create')(self.context, {
+            # see the following commit to understand why this line is here
+            # http://github.com/ckan/ckanext-harvest/commit/f315f41c86cbde4a49ef869b6993598f8cb11e2d
+            self.context.pop(u'__auth_audit', None)
+            toolkit.get_action(u'organization_create')(context, {
                 u'id': organization_id,
                 u'name': organization_id
-                })
+            })
