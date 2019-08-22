@@ -4,7 +4,7 @@
 # This file is part of ckanext-ldap
 # Created by the Natural History Museum in London, UK
 
-from ckanext.ldap.controllers.user import _find_ldap_user
+from ckanext.ldap.lib.search import find_ldap_user
 
 from ckan.plugins import toolkit
 
@@ -20,7 +20,7 @@ def user_create(next_auth, context, data_dict=None):
 
     '''
     if data_dict and u'name' in data_dict:
-        ldap_user_dict = _find_ldap_user(data_dict[u'name'])
+        ldap_user_dict = find_ldap_user(data_dict[u'name'])
         if ldap_user_dict:
             return {
                 u'success': False,

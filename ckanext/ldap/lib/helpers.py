@@ -37,4 +37,15 @@ def get_login_action():
         action = u'/ldap_login_handler?came_from=' + camefrom[0]
     else:
         action = u'/ldap_login_handler'
-    return action 
+    return action
+
+
+def decode_str(s, encoding=u'utf-8'):
+    try:
+        # this try throws NameError if this is python3
+        if isinstance(s, basestring) and isinstance(s, str):
+            return unicode(s, encoding)
+    except NameError:
+        if isinstance(s, bytes):
+            return s.decode(encoding)
+    return s

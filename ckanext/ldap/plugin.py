@@ -15,6 +15,7 @@ from ckanext.ldap.logic.auth.update import user_update
 from ckanext.ldap.logic.auth.create import user_create
 from ckanext.ldap.model.ldap_user import setup as model_setup
 from ckanext.ldap.lib.helpers import is_ldap_user, get_login_action
+from ckanext.ldap import routes
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class ConfigError(Exception):
 
 class LdapPlugin(SingletonPlugin):
     '''"LdapPlugin
-    
+
     This plugin provides Ldap authentication by implementing the IAuthenticator
     interface.
 
@@ -41,26 +42,17 @@ class LdapPlugin(SingletonPlugin):
 
     def update_config(self, config):
         '''Implement IConfiguer.update_config
-        
+
         Add our custom template to the list of templates so we can override the login form.
 
-        :param config: 
+        :param config:
 
         '''
         toolkit.add_template_directory(config, u'templates')
 
-    def before_map(self, map):
-        '''Implements Iroutes.before_map
-        
-        Add our custom login form handler
-
-        :param map: 
-
-        '''
-        map.connect('/ldap_login_handler',
-                    controller=u'ckanext.ldap.controllers.user:UserController',
-                    action=u'login_handler')
-        return map
+    ## IBlueprint
+    def get_blueprint(self):
+        return routes.blueprints
 
     def get_auth_functions(self):
         '''Implements IAuthFunctions.get_auth_functions'''
@@ -72,7 +64,7 @@ class LdapPlugin(SingletonPlugin):
     def configure(self, main_config):
         '''Implementation of IConfigurable.configure
 
-        :param main_config: 
+        :param main_config:
 
         '''
         # Setup our models
@@ -180,7 +172,7 @@ class LdapPlugin(SingletonPlugin):
 
     def login(self):
         '''Implementation of IAuthenticator.login
-        
+
         We don't need to do anything here as we override the form & implement our own controller action
 
 
@@ -189,7 +181,7 @@ class LdapPlugin(SingletonPlugin):
 
     def identify(self):
         '''Implementiation of IAuthenticator.identify
-        
+
         Identify which user (if any) is logged in via this plugin
 
 
@@ -209,10 +201,10 @@ class LdapPlugin(SingletonPlugin):
     def abort(self, status_code, detail, headers, comment):
         '''Implementation of IAuthenticator.abort
 
-        :param status_code: 
-        :param detail: 
-        :param headers: 
-        :param comment: 
+        :param status_code:
+        :param detail:
+        :param headers:
+        :param comment:
 
         '''
         return status_code, detail, headers, comment
@@ -234,7 +226,7 @@ class LdapPlugin(SingletonPlugin):
 def _allowed_roles(v):
     '''
 
-    :param v: 
+    :param v:
 
     '''
     if v not in [u'member', u'editor', u'admin']:
@@ -244,7 +236,7 @@ def _allowed_roles(v):
 def _allowed_auth_methods(v):
     '''
 
-    :param v: 
+    :param v:
 
     '''
     if v.upper() not in [u'SIMPLE', u'SASL']:
@@ -254,7 +246,7 @@ def _allowed_auth_methods(v):
 def _allowed_auth_mechanisms(v):
     '''
 
-    :param v: 
+    :param v:
 
     '''
     if v.upper() not in [
