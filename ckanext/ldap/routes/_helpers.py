@@ -12,7 +12,6 @@ import ldap.filter
 import re
 from ckanext.ldap.lib.exceptions import UserConflictError
 from ckanext.ldap.model.ldap_user import LdapUser
-from ckanext.ldap.plugin import config
 
 from ckan.common import session
 from ckan.model import Session
@@ -130,7 +129,7 @@ def get_or_create_ldap_user(ldap_user_dict):
     exists = ckan_user_exists(ldap_user_dict[u'username'])
     if exists[u'exists'] and not exists[u'is_ldap']:
         # If ckanext.ldap.migrate is set, update exsting user_dict.
-        if not config[u'ckanext.ldap.migrate']:
+        if not toolkit.config[u'ckanext.ldap.migrate']:
             raise UserConflictError(toolkit._(
                 u'There is a username conflict. Please inform the site administrator.'))
         else:
@@ -174,16 +173,16 @@ def get_or_create_ldap_user(ldap_user_dict):
     Session.add(ldap_user)
     Session.commit()
     # Add the user to it's group if needed
-    if u'ckanext.ldap.organization.id' in config:
+    if u'ckanext.ldap.organization.id' in toolkit.config:
         toolkit.get_action(u'member_create')(
             context={
                 u'ignore_auth': True
                 },
             data_dict={
-                u'id': config[u'ckanext.ldap.organization.id'],
+                u'id': toolkit.config[u'ckanext.ldap.organization.id'],
                 u'object': user_name,
                 u'object_type': u'user',
-                u'capacity': config[u'ckanext.ldap.organization.role']
+                u'capacity': toolkit.config[u'ckanext.ldap.organization.role']
                 }
             )
     return user_name
@@ -197,8 +196,8 @@ def check_ldap_password(cn, password):
     :returns: True on success, False on failure
 
     '''
-    cnx = ldap.initialize(config[u'ckanext.ldap.uri'], bytes_mode=False,
-                          trace_level=config[u'ckanext.ldap.trace_level'])
+    cnx = ldap.initialize(toolkit.config[u'ckanext.ldap.uri'], bytes_mode=False,
+                          trace_level=toolkit.config[u'ckanext.ldap.trace_level'])
     try:
         cnx.bind_s(cn, password)
     except ldap.SERVER_DOWN:
