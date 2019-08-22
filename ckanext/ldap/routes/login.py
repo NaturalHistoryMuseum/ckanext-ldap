@@ -20,23 +20,23 @@ def initialise():
     ldap.set_option(ldap.OPT_DEBUG_LEVEL, toolkit.config[u'ckanext.ldap.debug_level'])
 
 
-@blueprint.route('/ldap_login_handler')
-def login_handler():
+@blueprint.route('/ldap_login_handler', methods=['POST'], defaults={'came_from': ''})
+@blueprint.route('/ldap_login_handler?<came_from>', methods=['POST'])
+def login_handler(came_from):
     '''Action called when login in via the LDAP login form'''
-    came_from = toolkit.request.params.get(u'came_from', '')
     params = toolkit.request.POST
     if u'login' in params and u'password' in params:
         login = params[u'login']
         password = params[u'password']
         try:
             ldap_user_dict = _helpers.find_ldap_user(login)
-        except _helpers.MultipleMatchError as e:
+        except MultipleMatchError as e:
             # Multiple users match. Inform the user and try again.
             return _helpers.login_failed(notice=str(e))
         if ldap_user_dict and _helpers.check_ldap_password(ldap_user_dict[u'cn'], password):
             try:
                 user_name = _helpers.get_or_create_ldap_user(ldap_user_dict)
-            except _helpers.UserConflictError as e:
+            except UserConflictError as e:
                 return _helpers.login_failed(error=str(e))
             return _helpers.login_success(user_name, came_from=came_from)
         elif ldap_user_dict:

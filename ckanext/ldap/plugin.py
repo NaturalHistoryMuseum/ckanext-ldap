@@ -36,7 +36,7 @@ class LdapPlugin(SingletonPlugin):
     implements(interfaces.IAuthenticator)
     implements(interfaces.IConfigurable)
     implements(interfaces.IConfigurer)
-    implements(interfaces.IRoutes, inherit=True)
+    implements(interfaces.IBlueprint, inherit=True)
     implements(interfaces.IAuthFunctions)
     implements(interfaces.ITemplateHelpers, inherit=True)
 

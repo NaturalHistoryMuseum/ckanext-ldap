@@ -34,9 +34,9 @@ def get_login_action():
     else:
         camefrom = None
     if camefrom:
-        action = u'/ldap_login_handler?came_from=' + camefrom[0]
+        action = toolkit.url_for(u'ldap.login_handler', came_from=str(camefrom[0]))
     else:
-        action = u'/ldap_login_handler'
+        action = toolkit.url_for(u'ldap.login_handler')
     return action
 
 
