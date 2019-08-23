@@ -5,7 +5,6 @@
 # Created by the Natural History Museum in London, UK
 
 from ckanext.ldap.model.ldap_user import LdapUser
-from ckanext.ldap.plugin import config
 from ckanext.ldap.lib.search import find_ldap_user
 
 from ckan.logic import auth
@@ -28,7 +27,7 @@ def user_update(next_auth, context, data_dict):
     except toolkit.ObjectNotFound:
         pass
     # Prevent edition of LDAP users (if so configured)
-    if config[u'ckanext.ldap.prevent_edits'] and user_obj and LdapUser.by_user_id(
+    if toolkit.config[u'ckanext.ldap.prevent_edits'] and user_obj and LdapUser.by_user_id(
             user_obj.id):
         return {
             u'success': False,

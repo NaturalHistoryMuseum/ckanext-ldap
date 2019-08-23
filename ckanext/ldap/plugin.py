@@ -6,16 +6,14 @@
 
 import logging
 
-from ckan.plugins import toolkit, SingletonPlugin, implements, interfaces
-from ckan.common import session
-
-config = {}
-
-from ckanext.ldap.logic.auth.update import user_update
-from ckanext.ldap.logic.auth.create import user_create
-from ckanext.ldap.model.ldap_user import setup as model_setup
-from ckanext.ldap.lib.helpers import is_ldap_user, get_login_action
 from ckanext.ldap import routes
+from ckanext.ldap.lib.helpers import get_login_action, is_ldap_user
+from ckanext.ldap.logic.auth.create import user_create
+from ckanext.ldap.logic.auth.update import user_update
+from ckanext.ldap.model.ldap_user import setup as model_setup
+
+from ckan.common import session
+from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 
 log = logging.getLogger(__name__)
 
@@ -61,10 +59,10 @@ class LdapPlugin(SingletonPlugin):
             u'user_create': user_create
             }
 
-    def configure(self, main_config):
+    def configure(self, config):
         '''Implementation of IConfigurable.configure
 
-        :param main_config:
+        :param config:
 
         '''
         # Setup our models
@@ -131,49 +129,37 @@ class LdapPlugin(SingletonPlugin):
                 },
             }
         errors = []
-        for i in schema:
-            v = None
-            if i in main_config:
-                v = main_config[i]
-            elif i.replace(u'ckanext.', u'') in main_config:
-                log.warning(
-                    u'LDAP configuration options should be prefixed with \'ckanext.\'. ' +
-                    u'Please update {0} to {1}'.format(i.replace(u'ckanext.', u''), i))
-                # Support ldap.* options for backwards compatibility
-                main_config[i] = main_config[i.replace(u'ckanext.', u'')]
-                v = main_config[i]
+        for key, options in schema.items():
+            config_value = config.get(key, None)
 
-            if v:
-                if u'parse' in schema[i]:
-                    v = (schema[i][u'parse'])(v)
+            if config_value:
+                if u'parse' in options:
+                    config_value = (options[u'parse'])(config_value)
                 try:
-                    if u'validate' in schema[i]:
-                        (schema[i][u'validate'])(v)
-                    config[i] = v
+                    if u'validate' in options:
+                        (options[u'validate'])(config_value)
+                    toolkit.config[key] = config_value
                 except ConfigError as e:
                     errors.append(str(e))
-            elif schema[i].get(u'required', False):
-                errors.append(u'Configuration parameter {} is required'.format(i))
-            elif schema[i].get(u'required_if', False) and schema[i][
-                u'required_if'] in config:
-                errors.append(
-                    u'Configuration parameter {} is required when {} is presnt'.format(i,
-                                                                                       schema[
-                                                                                           i][
-                                                                                           u'required_if']))
-            elif u'default' in schema[i]:
-                config[i] = schema[i][u'default']
+            elif options.get(u'required', False):
+                errors.append(u'Configuration parameter {0} is required'.format(key))
+            elif u'required_if' in options and options[u'required_if'] in toolkit.config:
+                errors.append(u'Configuration parameter {0} is required '
+                              u'when {1} is present'.format(key, options[u'required_if']))
+            elif u'default' in options:
+                toolkit.config[key] = options[u'default']
+
+            # make sure the config options are all unicode for LDAP
+            if isinstance(toolkit.config.get(key, None), str):
+                toolkit.config[key] = unicode(toolkit.config.get(key))
         if len(errors):
             raise ConfigError(u'\n'.join(errors))
-        # make sure all the strings in the config are unicode formatted
-        for key, value in config.iteritems():
-            if isinstance(value, str):
-                config[key] = unicode(value, encoding=u'utf-8')
 
     def login(self):
         '''Implementation of IAuthenticator.login
 
-        We don't need to do anything here as we override the form & implement our own controller action
+        We don't need to do anything here as we override the form & implement our own controller
+        action
 
 
         '''
@@ -220,7 +206,7 @@ class LdapPlugin(SingletonPlugin):
         return {
             u'is_ldap_user': is_ldap_user,
             u'get_login_action': get_login_action
-        }
+            }
 
 
 def _allowed_roles(v):
