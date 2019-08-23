@@ -11,6 +11,7 @@ from ckan.model import User
 from ckan.plugins import toolkit
 from . import _helpers
 from ckanext.ldap.lib.exceptions import MultipleMatchError, UserConflictError
+from ckanext.ldap.lib.search import find_ldap_user
 
 blueprint = Blueprint(name=u'ldap', import_name=__name__)
 
@@ -20,16 +21,16 @@ def initialise():
     ldap.set_option(ldap.OPT_DEBUG_LEVEL, toolkit.config[u'ckanext.ldap.debug_level'])
 
 
-@blueprint.route('/ldap_login_handler', methods=['POST'], defaults={'came_from': ''})
-@blueprint.route('/ldap_login_handler?<came_from>', methods=['POST'])
-def login_handler(came_from):
+@blueprint.route('/ldap_login_handler', methods=['POST'])
+def login_handler():
     '''Action called when login in via the LDAP login form'''
-    params = toolkit.request.POST
+    params = toolkit.request.values
+    came_from = params.get(u'came_from', None)
     if u'login' in params and u'password' in params:
         login = params[u'login']
         password = params[u'password']
         try:
-            ldap_user_dict = _helpers.find_ldap_user(login)
+            ldap_user_dict = find_ldap_user(login)
         except MultipleMatchError as e:
             # Multiple users match. Inform the user and try again.
             return _helpers.login_failed(notice=str(e))
