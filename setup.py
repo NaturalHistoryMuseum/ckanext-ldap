@@ -30,7 +30,9 @@ setup(
     namespace_packages=[u'ckanext', u'ckanext.ldap'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=[],
+    install_requires=[
+        'python-ldap==3.0.0',
+        ],
     entry_points= \
         u'''
         [ckan.plugins]
