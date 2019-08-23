@@ -33,7 +33,7 @@ def login_failed(notice=None, error=None):
         toolkit.h.flash_notice(notice)
     if error:
         toolkit.h.flash_error(error)
-    toolkit.redirect_to(u'user.login')
+    return toolkit.redirect_to(u'user.login')
 
 
 def login_success(user_name, came_from):
@@ -45,7 +45,7 @@ def login_success(user_name, came_from):
     '''
     session[u'ckanext-ldap-user'] = user_name
     session.save()
-    toolkit.redirect_to(u'user.logged_in', came_from=came_from)
+    return toolkit.redirect_to(u'user.logged_in', came_from=came_from)
 
 
 def get_user_dict(user_id):
