@@ -59,7 +59,7 @@ class LDAPCommand(toolkit.CkanCommand):
         except toolkit.ObjectNotFound:
             # see the following commit to understand why this line is here
             # http://github.com/ckan/ckanext-harvest/commit/f315f41c86cbde4a49ef869b6993598f8cb11e2d
-            self.context.pop(u'__auth_audit', None)
+            context.pop(u'__auth_audit', None)
             toolkit.get_action(u'organization_create')(context, {
                 u'id': organization_id,
                 u'name': organization_id
