@@ -4,11 +4,6 @@
 # This file is part of ckanext-ldap
 # Created by the Natural History Museum in London, UK
 
+from . import login
 
-def main():
-    ''' '''
-    pass
-
-
-if __name__ == u'__main__':
-    main()
+blueprints = [login.blueprint]

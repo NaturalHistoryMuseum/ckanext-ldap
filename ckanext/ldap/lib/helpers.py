@@ -1,12 +1,10 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # encoding: utf-8
-"""
-Created by 'bens3' on 2013-06-21.
-Copyright (c) 2013 'bens3'. All rights reserved.
-Amended: hvw / 2018
-"""
+#
+# This file is part of ckanext-ldap
+# Created by the Natural History Museum in London, UK
 
-import pylons
+from ckan.common import session
 from ckan.plugins import toolkit
 
 try:
@@ -17,12 +15,13 @@ except ImportError:
 
 
 def is_ldap_user():
-    """
-    Help function for determining if current user is LDAP user
-    @return: boolean
-    """
+    '''Helper function for determining if current user is LDAP user
 
-    return 'ckanext-ldap-user' in pylons.session
+    :returns: boolean
+
+    '''
+
+    return u'ckanext-ldap-user' in session
 
 
 def get_login_action():
@@ -30,10 +29,23 @@ def get_login_action():
     as stored in context object's login_handler.
 
     '''
-    lh = toolkit.c.login_handler
-    camefrom = parse_qs(urlparse(lh).query).get('came_from')
-    if camefrom:
-        action = "/ldap_login_handler?came_from=" + camefrom[0]
+    if hasattr(toolkit.c, 'login_handler'):
+        camefrom = parse_qs(urlparse(toolkit.c.login_handler).query).get(u'came_from')
     else:
-        action = "/ldap_login_handler"
-    return action 
+        camefrom = None
+    if camefrom:
+        action = toolkit.url_for(u'ldap.login_handler', came_from=str(camefrom[0]))
+    else:
+        action = toolkit.url_for(u'ldap.login_handler')
+    return action
+
+
+def decode_str(s, encoding=u'utf-8'):
+    try:
+        # this try throws NameError if this is python3
+        if isinstance(s, basestring) and isinstance(s, str):
+            return unicode(s, encoding)
+    except NameError:
+        if isinstance(s, bytes):
+            return s.decode(encoding)
+    return s

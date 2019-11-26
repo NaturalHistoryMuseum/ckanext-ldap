@@ -5,10 +5,9 @@
 # Created by the Natural History Museum in London, UK
 
 
-def main():
-    ''' '''
+class MultipleMatchError(Exception):
     pass
 
 
-if __name__ == u'__main__':
-    main()
+class UserConflictError(Exception):
+    pass
