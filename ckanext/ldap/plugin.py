@@ -151,7 +151,10 @@ class LdapPlugin(SingletonPlugin):
 
             # make sure the config options are all unicode for LDAP
             if isinstance(toolkit.config.get(key, None), str):
-                toolkit.config[key] = str(toolkit.config.get(key))
+                try:
+                    toolkit.config[key] = unicode(toolkit.config.get(key))
+                except NameError:
+                    toolkit.config[key] = str(toolkit.config.get(key))
         if len(errors):
             raise ConfigError(u'\n'.join(errors))
 
