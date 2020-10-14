@@ -53,7 +53,7 @@ def find_ldap_user(login):
                 u'LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) '
                 u'invalid')
             return None
-        except ldap.LDAPError, e:
+        except ldap.LDAPError as e:
             log.error(u'Fatal LDAP Error: {0}'.format(e))
             return None
 
