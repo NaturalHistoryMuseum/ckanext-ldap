@@ -75,10 +75,10 @@ These are the options that can be specified in your .ini config file.
 Name|Description|Options
 --|--|--
 `ckanext.ldap.uri`|The URI of the LDAP server, of the form _ldap://example.com_. You can use the URI to specify TLS (use 'ldaps' protocol), and the port number (suffix ':port').|True/False
-`ckanext.ldap.base_dn`|The base dn in which to perform the search. Example: 'ou=USERS,dc=example,dc=com'.|  
-`ckanext.ldap.search.filter`|This is the search string that is sent to the LDAP server, in which '{login}' is replaced by the user name provided by the user. Example: 'sAMAccountName={login}'. The search performed here **must** return exactly 0 or 1 entry.|  
-`ckanext.ldap.username`|The LDAP attribute that will be used as the CKAN username. This **must** be unique.|  
-`ckanext.ldap.email`|The LDAP attribute to map to the user's email address. This **must** be unique.|  
+`ckanext.ldap.base_dn`|The base dn in which to perform the search. Example: 'ou=USERS,dc=example,dc=com'.|
+`ckanext.ldap.search.filter`|This is the search string that is sent to the LDAP server, in which '{login}' is replaced by the user name provided by the user. Example: 'sAMAccountName={login}'. The search performed here **must** return exactly 0 or 1 entry.|
+`ckanext.ldap.username`|The LDAP attribute that will be used as the CKAN username. This **must** be unique.|
+`ckanext.ldap.email`|The LDAP attribute to map to the user's email address. This **must** be unique.|
 
 ## Other options
 
@@ -107,9 +107,9 @@ Name|Description|Options|Default
 
 ### `ldap`
 
-1. `setup-org`: create the organisation specified in `ckanext.ldap.organization.id`.
+1. `setup_org`: create the organisation specified in `ckanext.ldap.organization.id`.
     ```bash
-    paster --plugin=ckanext-ldap ldap setup-org -c $CONFIG_FILE
+    ckan -c $CONFIG_FILE ldap setup_org
     ```
 
 ## Templates

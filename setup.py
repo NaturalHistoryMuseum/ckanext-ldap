@@ -37,8 +37,5 @@ setup(
         u'''
         [ckan.plugins]
             ldap=ckanext.ldap.plugin:LdapPlugin
-
-        [paste.paster_command]
-            ldap=ckanext.ldap.commands.ldap:LDAPCommand
         ''',
     )

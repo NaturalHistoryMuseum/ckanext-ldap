@@ -6,7 +6,7 @@
 
 import logging
 
-from ckanext.ldap import routes
+from ckanext.ldap import routes, cli
 from ckanext.ldap.lib.helpers import get_login_action, is_ldap_user
 from ckanext.ldap.logic.auth.create import user_create
 from ckanext.ldap.logic.auth.update import user_update
@@ -24,12 +24,11 @@ class ConfigError(Exception):
 
 
 class LdapPlugin(SingletonPlugin):
-    '''"LdapPlugin
+    '''
+    LdapPlugin
 
     This plugin provides Ldap authentication by implementing the IAuthenticator
     interface.
-
-
     '''
     implements(interfaces.IAuthenticator)
     implements(interfaces.IConfigurable)
@@ -37,6 +36,11 @@ class LdapPlugin(SingletonPlugin):
     implements(interfaces.IBlueprint, inherit=True)
     implements(interfaces.IAuthFunctions)
     implements(interfaces.ITemplateHelpers, inherit=True)
+    implements(interfaces.IClick)
+
+    ## IClick
+    def get_commands(self):
+        return cli.get_commands()
 
     def update_config(self, config):
         '''Implement IConfiguer.update_config
