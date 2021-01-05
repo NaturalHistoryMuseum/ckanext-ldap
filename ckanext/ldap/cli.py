@@ -15,7 +15,7 @@ def ldap():
     pass
 
 
-@ldap.command()
+@ldap.command(name=u'setup-org')
 def setup_org():
     '''
     Sets up the default organisation which all ldap users will be automatically made members of.

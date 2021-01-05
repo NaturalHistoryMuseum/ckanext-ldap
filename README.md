@@ -107,9 +107,9 @@ Name|Description|Options|Default
 
 ### `ldap`
 
-1. `setup_org`: create the organisation specified in `ckanext.ldap.organization.id`.
+1. `setup-org`: create the organisation specified in `ckanext.ldap.organization.id`.
     ```bash
-    ckan -c $CONFIG_FILE ldap setup_org
+    ckan -c $CONFIG_FILE ldap setup-org
     ```
 
 ## Templates
