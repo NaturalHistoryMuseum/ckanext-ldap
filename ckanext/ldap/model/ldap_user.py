@@ -9,16 +9,16 @@ import datetime
 from ckan import model
 from sqlalchemy import Column, ForeignKey, Table, orm, types
 
-__all__ = [u'LdapUser']
+__all__ = ['LdapUser']
 
-ldap_user_table = Table(u'ldap_user', model.meta.metadata,
-                        Column(u'id', types.UnicodeText, primary_key=True,
+ldap_user_table = Table('ldap_user', model.meta.metadata,
+                        Column('id', types.UnicodeText, primary_key=True,
                                default=model.types.make_uuid),
-                        Column(u'user_id', types.UnicodeText, ForeignKey(u'user.id'),
+                        Column('user_id', types.UnicodeText, ForeignKey('user.id'),
                                unique=True, nullable=False),
-                        Column(u'ldap_id', types.UnicodeText, index=True, unique=True,
+                        Column('ldap_id', types.UnicodeText, index=True, unique=True,
                                nullable=False),
-                        Column(u'created', types.DateTime, default=datetime.datetime.now)
+                        Column('created', types.DateTime, default=datetime.datetime.now)
                         )
 
 
@@ -59,7 +59,6 @@ class LdapUser(model.domain_object.DomainObject):
 
 
 model.meta.mapper(LdapUser, ldap_user_table, properties={
-    u'user': orm.relation(model.user.User,
-                          backref=orm.backref(u'ldap_user',
-                                              cascade=u'all, delete, delete-orphan'))
+    'user': orm.relation(model.user.User,
+                         backref=orm.backref('ldap_user', cascade='all, delete, delete-orphan'))
 }, )

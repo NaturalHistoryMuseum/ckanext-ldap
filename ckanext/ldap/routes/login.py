@@ -13,12 +13,12 @@ from flask import Blueprint
 
 from . import _helpers
 
-blueprint = Blueprint(name=u'ldap', import_name=__name__)
+blueprint = Blueprint(name='ldap', import_name=__name__)
 
 
 @blueprint.before_app_first_request
 def initialise():
-    ldap.set_option(ldap.OPT_DEBUG_LEVEL, toolkit.config[u'ckanext.ldap.debug_level'])
+    ldap.set_option(ldap.OPT_DEBUG_LEVEL, toolkit.config['ckanext.ldap.debug_level'])
 
 
 @blueprint.route('/ldap_login_handler', methods=['POST'])
@@ -27,16 +27,16 @@ def login_handler():
     Action called when login in via the LDAP login form.
     '''
     params = toolkit.request.values
-    came_from = params.get(u'came_from', None)
-    if u'login' in params and u'password' in params:
-        login = params[u'login']
-        password = params[u'password']
+    came_from = params.get('came_from', None)
+    if 'login' in params and 'password' in params:
+        login = params['login']
+        password = params['password']
         try:
             ldap_user_dict = find_ldap_user(login)
         except MultipleMatchError as e:
             # Multiple users match. Inform the user and try again.
             return _helpers.login_failed(notice=str(e))
-        if ldap_user_dict and _helpers.check_ldap_password(ldap_user_dict[u'cn'], password):
+        if ldap_user_dict and _helpers.check_ldap_password(ldap_user_dict['cn'], password):
             try:
                 user_name = _helpers.get_or_create_ldap_user(ldap_user_dict)
             except UserConflictError as e:
@@ -46,26 +46,26 @@ def login_handler():
             # There is an LDAP user, but the auth is wrong. There could be a
             # CKAN user of the same name if the LDAP user had been created
             # later - in which case we have a conflict we can't solve.
-            if toolkit.config[u'ckanext.ldap.ckan_fallback']:
+            if toolkit.config['ckanext.ldap.ckan_fallback']:
                 exists = _helpers.ckan_user_exists(login)
-                if exists[u'exists'] and not exists[u'is_ldap']:
+                if exists['exists'] and not exists['is_ldap']:
                     return _helpers.login_failed(error=toolkit._(
-                        u'Username conflict. Please contact the site administrator.'))
-            return _helpers.login_failed(error=toolkit._(u'Bad username or password.'))
-        elif toolkit.config[u'ckanext.ldap.ckan_fallback']:
+                        'Username conflict. Please contact the site administrator.'))
+            return _helpers.login_failed(error=toolkit._('Bad username or password.'))
+        elif toolkit.config['ckanext.ldap.ckan_fallback']:
             # No LDAP user match, see if we have a CKAN user match
             try:
                 user_dict = _helpers.get_user_dict(login)
                 # We need the model to validate the password
-                user = User.by_name(user_dict[u'name'])
+                user = User.by_name(user_dict['name'])
             except toolkit.ObjectNotFound:
                 user = None
             if user and user.validate_password(password):
                 return _helpers.login_success(user.name, came_from=came_from)
             else:
                 return _helpers.login_failed(
-                    error=toolkit._(u'Bad username or password.'))
+                    error=toolkit._('Bad username or password.'))
         else:
-            return _helpers.login_failed(error=toolkit._(u'Bad username or password.'))
+            return _helpers.login_failed(error=toolkit._('Bad username or password.'))
     return _helpers.login_failed(
-        error=toolkit._(u'Please enter a username and password'))
+        error=toolkit._('Please enter a username and password'))

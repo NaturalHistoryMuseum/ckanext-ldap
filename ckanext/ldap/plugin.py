@@ -49,7 +49,7 @@ class LdapPlugin(SingletonPlugin):
         :param config:
 
         '''
-        toolkit.add_template_directory(config, u'templates')
+        toolkit.add_template_directory(config, 'templates')
 
     ## IBlueprint
     def get_blueprint(self):
@@ -58,8 +58,8 @@ class LdapPlugin(SingletonPlugin):
     def get_auth_functions(self):
         '''Implements IAuthFunctions.get_auth_functions'''
         return {
-            u'user_update': user_update,
-            u'user_create': user_create
+            'user_update': user_update,
+            'user_create': user_create
         }
 
     def configure(self, config):
@@ -73,62 +73,62 @@ class LdapPlugin(SingletonPlugin):
         # Our own config schema, defines required items, default values and
         # transform functions
         schema = {
-            u'ckanext.ldap.uri': {
-                u'required': True
+            'ckanext.ldap.uri': {
+                'required': True
             },
-            u'ckanext.ldap.base_dn': {
-                u'required': True
+            'ckanext.ldap.base_dn': {
+                'required': True
             },
-            u'ckanext.ldap.search.filter': {
-                u'required': True
+            'ckanext.ldap.search.filter': {
+                'required': True
             },
-            u'ckanext.ldap.username': {
-                u'required': True
+            'ckanext.ldap.username': {
+                'required': True
             },
-            u'ckanext.ldap.email': {
-                u'required': True
+            'ckanext.ldap.email': {
+                'required': True
             },
-            u'ckanext.ldap.auth.dn': {},
-            u'ckanext.ldap.auth.password': {
-                u'required_if': u'ckanext.ldap.auth.dn'
+            'ckanext.ldap.auth.dn': {},
+            'ckanext.ldap.auth.password': {
+                'required_if': 'ckanext.ldap.auth.dn'
             },
-            u'ckanext.ldap.auth.method': {
-                u'default': u'SIMPLE',
-                u'validate': _allowed_auth_methods
+            'ckanext.ldap.auth.method': {
+                'default': 'SIMPLE',
+                'validate': _allowed_auth_methods
             },
-            u'ckanext.ldap.auth.mechanism': {
-                u'default': u'DIGEST-MD5',
-                u'validate': _allowed_auth_mechanisms
+            'ckanext.ldap.auth.mechanism': {
+                'default': 'DIGEST-MD5',
+                'validate': _allowed_auth_mechanisms
             },
-            u'ckanext.ldap.search.alt': {},
-            u'ckanext.ldap.search.alt_msg': {
-                u'required_if': u'ckanext.ldap.search.alt'
+            'ckanext.ldap.search.alt': {},
+            'ckanext.ldap.search.alt_msg': {
+                'required_if': 'ckanext.ldap.search.alt'
             },
-            u'ckanext.ldap.fullname': {},
-            u'ckanext.ldap.organization.id': {},
-            u'ckanext.ldap.organization.role': {
-                u'default': u'member',
-                u'validate': _allowed_roles
+            'ckanext.ldap.fullname': {},
+            'ckanext.ldap.organization.id': {},
+            'ckanext.ldap.organization.role': {
+                'default': 'member',
+                'validate': _allowed_roles
             },
-            u'ckanext.ldap.ckan_fallback': {
-                u'default': False,
-                u'parse': toolkit.asbool
+            'ckanext.ldap.ckan_fallback': {
+                'default': False,
+                'parse': toolkit.asbool
             },
-            u'ckanext.ldap.prevent_edits': {
-                u'default': False,
-                u'parse': toolkit.asbool
+            'ckanext.ldap.prevent_edits': {
+                'default': False,
+                'parse': toolkit.asbool
             },
-            u'ckanext.ldap.migrate': {
-                u'default': False,
-                u'parse': toolkit.asbool
+            'ckanext.ldap.migrate': {
+                'default': False,
+                'parse': toolkit.asbool
             },
-            u'ckanext.ldap.debug_level': {
-                u'default': 0,
-                u'parse': toolkit.asint
+            'ckanext.ldap.debug_level': {
+                'default': 0,
+                'parse': toolkit.asint
             },
-            u'ckanext.ldap.trace_level': {
-                u'default': 0,
-                u'parse': toolkit.asint
+            'ckanext.ldap.trace_level': {
+                'default': 0,
+                'parse': toolkit.asint
             },
         }
         errors = []
@@ -136,21 +136,21 @@ class LdapPlugin(SingletonPlugin):
             config_value = config.get(key, None)
 
             if config_value:
-                if u'parse' in options:
-                    config_value = (options[u'parse'])(config_value)
+                if 'parse' in options:
+                    config_value = (options['parse'])(config_value)
                 try:
-                    if u'validate' in options:
-                        (options[u'validate'])(config_value)
+                    if 'validate' in options:
+                        (options['validate'])(config_value)
                     toolkit.config[key] = config_value
                 except ConfigError as e:
                     errors.append(str(e))
-            elif options.get(u'required', False):
-                errors.append(u'Configuration parameter {0} is required'.format(key))
-            elif u'required_if' in options and options[u'required_if'] in toolkit.config:
-                errors.append(u'Configuration parameter {0} is required '
-                              u'when {1} is present'.format(key, options[u'required_if']))
-            elif u'default' in options:
-                toolkit.config[key] = options[u'default']
+            elif options.get('required', False):
+                errors.append('Configuration parameter {0} is required'.format(key))
+            elif 'required_if' in options and options['required_if'] in toolkit.config:
+                errors.append('Configuration parameter {0} is required '
+                              'when {1} is present'.format(key, options['required_if']))
+            elif 'default' in options:
+                toolkit.config[key] = options['default']
 
             # make sure the config options are all unicode for LDAP
             if isinstance(toolkit.config.get(key, None), str):
@@ -159,7 +159,7 @@ class LdapPlugin(SingletonPlugin):
                 except NameError:
                     toolkit.config[key] = str(toolkit.config.get(key))
         if len(errors):
-            raise ConfigError(u'\n'.join(errors))
+            raise ConfigError('\n'.join(errors))
 
     # IAuthenticator
     def login(self):
@@ -175,7 +175,7 @@ class LdapPlugin(SingletonPlugin):
         Identify which user (if any) is logged in via this plugin
         '''
         # FIXME: This breaks if the current user changes their own user name.
-        user = session.get(u'ckanext-ldap-user')
+        user = session.get('ckanext-ldap-user')
         if user:
             toolkit.c.user = user
         else:
@@ -194,28 +194,28 @@ class LdapPlugin(SingletonPlugin):
         '''
         Delete user details stored in the session by this plugin.
         '''
-        if u'ckanext-ldap-user' in session:
-            del session[u'ckanext-ldap-user']
+        if 'ckanext-ldap-user' in session:
+            del session['ckanext-ldap-user']
             session.save()
 
     def get_helpers(self):
         return {
-            u'is_ldap_user': is_ldap_user,
-            u'get_login_action': get_login_action
+            'is_ldap_user': is_ldap_user,
+            'get_login_action': get_login_action
         }
 
 
 def _allowed_roles(v):
-    if v not in [u'member', u'editor', u'admin']:
-        raise ConfigError(u'role must be one of "member", "editor" or "admin"')
+    if v not in ['member', 'editor', 'admin']:
+        raise ConfigError('role must be one of "member", "editor" or "admin"')
 
 
 def _allowed_auth_methods(v):
-    if v.upper() not in [u'SIMPLE', u'SASL']:
-        raise ConfigError(u'Only SIMPLE and SASL authentication methods are supported')
+    if v.upper() not in ['SIMPLE', 'SASL']:
+        raise ConfigError('Only SIMPLE and SASL authentication methods are supported')
 
 
 def _allowed_auth_mechanisms(v):
     # Only DIGEST-MD5 is supported when the auth method is SASL
-    if v.upper() != u'DIGEST-MD5':
-        raise ConfigError(u'Only DIGEST-MD5 is supported as an authentication mechanism')
+    if v.upper() != 'DIGEST-MD5':
+        raise ConfigError('Only DIGEST-MD5 is supported as an authentication mechanism')

@@ -16,12 +16,12 @@ def user_create(next_auth, context, data_dict=None):
     :param context:
     :param data_dict:  (Default value = None)
     '''
-    if data_dict and u'name' in data_dict:
-        ldap_user_dict = find_ldap_user(data_dict[u'name'])
+    if data_dict and 'name' in data_dict:
+        ldap_user_dict = find_ldap_user(data_dict['name'])
         if ldap_user_dict:
             return {
-                u'success': False,
-                u'msg': toolkit._(u'An LDAP user by that name already exists')
+                'success': False,
+                'msg': toolkit._('An LDAP user by that name already exists')
             }
 
     return next_auth(context, data_dict)
