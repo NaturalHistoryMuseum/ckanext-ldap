@@ -35,11 +35,6 @@ def get_login_action():
 
 
 def decode_str(s, encoding='utf-8'):
-    try:
-        # this try throws NameError if this is python3
-        if isinstance(s, basestring) and isinstance(s, str):
-            return unicode(s, encoding)
-    except NameError:
-        if isinstance(s, bytes):
-            return s.decode(encoding)
+    if isinstance(s, bytes):
+        return s.decode(encoding)
     return s

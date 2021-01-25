@@ -130,7 +130,7 @@ def ldap_search(cnx, filter_str, attributes, non_unique='raise'):
                 return None
         # Set return dict
         for i in ['username', 'fullname', 'email', 'about']:
-            cname = 'ckanext.ldap.' + i
+            cname = f'ckanext.ldap.{i}'
             if cname in toolkit.config and toolkit.config[cname] in attr:
                 v = attr[toolkit.config[cname]]
                 if v:
