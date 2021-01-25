@@ -7,21 +7,20 @@
 import logging
 
 import ldap
+from ckan.plugins import toolkit
 from ckanext.ldap.lib import helpers
 from ckanext.ldap.lib.exceptions import MultipleMatchError
-
-from ckan.plugins import toolkit
 
 log = logging.getLogger(u'ckanext.ldap')
 
 
 def find_ldap_user(login):
-    '''Find the LDAP user identified by 'login' in the configured ldap database
+    '''
+    Find the LDAP user identified by 'login' in the configured ldap database.
 
     :param login: The login to find in the LDAP database
-    :returns: None if no user is found, a dictionary defining 'cn', 'username',
-              'fullname' and 'email otherwise.
-
+    :returns: None if no user is found, a dictionary defining 'cn', 'username', 'fullname' and
+              'email otherwise.
     '''
     cnx = ldap.initialize(toolkit.config[u'ckanext.ldap.uri'], bytes_mode=False,
                           trace_level=toolkit.config[u'ckanext.ldap.trace_level'])
@@ -123,7 +122,7 @@ def ldap_search(cnx, filter_str, attributes, non_unique=u'raise'):
         attr = res[0][1]
         ret = {
             u'cn': cn,
-            }
+        }
 
         # Check required fields
         for i in [u'username', u'email']:

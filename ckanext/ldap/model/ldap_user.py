@@ -6,9 +6,8 @@
 
 import datetime
 
-from sqlalchemy import Column, ForeignKey, Table, orm, types
-
 from ckan import model
+from sqlalchemy import Column, ForeignKey, Table, orm, types
 
 __all__ = [u'LdapUser']
 
@@ -63,4 +62,4 @@ model.meta.mapper(LdapUser, ldap_user_table, properties={
     u'user': orm.relation(model.user.User,
                           backref=orm.backref(u'ldap_user',
                                               cascade=u'all, delete, delete-orphan'))
-    }, )
+}, )

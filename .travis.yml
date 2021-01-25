@@ -1,19 +1,13 @@
-dist: trusty
+sudo: required
+
 language: python
 
-python:
-  - "2.7"
-
-install:
-  - sh ckanext/ldap/tests/bin/build.sh
-
 services:
-  - redis-server
-  - postgresql
+  - docker
 
-addons:
-  postgresql: "9.4"
-
-script: coverage run --source=ckanext.ldap setup.py nosetests --ckan --with-pylons=ckanext/ldap/tests/bin/test.ini --nologcapture --debug=ckantest,ckanext.ldap --rednose
+script:
+  - pip install coveralls
+  - docker-compose build
+  - docker-compose run ckan
 
 after_success: coveralls

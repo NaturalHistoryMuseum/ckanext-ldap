@@ -1,6 +1,3 @@
-nose
-rednose
 mock
-httpretty
-coveralls
--e git+https://github.com/NaturalHistoryMuseum/ckantest.git#egg=ckantest
+pytest>=4.6.5
+pytest-cov>=2.7.1

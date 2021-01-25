@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  ckan:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    environment:
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+    depends_on:
+      - db
+      - solr
+      - redis
+    volumes:
+      - .:/srv/app/src/ckanext-ldap
+
+  solr:
+    build:
+      context: https://github.com/okfn/docker-ckan.git#:solr
+    logging:
+      driver: none
+
+  db:
+    build:
+      context: https://github.com/okfn/docker-ckan.git#:postgresql
+      args:
+        - DATASTORE_READONLY_PASSWORD=password
+        - POSTGRES_PASSWORD=password
+    environment:
+      - DATASTORE_READONLY_PASSWORD=password
+      - POSTGRES_PASSWORD=password
+    logging:
+      driver: none
+
+  redis:
+    image: redis:latest
+    logging:
+      driver: none

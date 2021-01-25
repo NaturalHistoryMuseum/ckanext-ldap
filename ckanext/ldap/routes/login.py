@@ -5,13 +5,13 @@
 # Created by the Natural History Museum in London, UK
 
 import ldap
-from flask import Blueprint
-
 from ckan.model import User
 from ckan.plugins import toolkit
-from . import _helpers
 from ckanext.ldap.lib.exceptions import MultipleMatchError, UserConflictError
 from ckanext.ldap.lib.search import find_ldap_user
+from flask import Blueprint
+
+from . import _helpers
 
 blueprint = Blueprint(name=u'ldap', import_name=__name__)
 
@@ -23,7 +23,9 @@ def initialise():
 
 @blueprint.route('/ldap_login_handler', methods=['POST'])
 def login_handler():
-    '''Action called when login in via the LDAP login form'''
+    '''
+    Action called when login in via the LDAP login form.
+    '''
     params = toolkit.request.values
     came_from = params.get(u'came_from', None)
     if u'login' in params and u'password' in params:

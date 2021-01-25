@@ -5,29 +5,26 @@
 # Created by the Natural History Museum in London, UK
 
 import logging
+import re
 import uuid
 
 import ldap
 import ldap.filter
-import re
-from ckanext.ldap.lib.exceptions import UserConflictError
-from ckanext.ldap.model.ldap_user import LdapUser
-
 from ckan.common import session
 from ckan.model import Session
 from ckan.plugins import toolkit
+from ckanext.ldap.lib.exceptions import UserConflictError
+from ckanext.ldap.model.ldap_user import LdapUser
 
 log = logging.getLogger(__name__)
 
 
 def login_failed(notice=None, error=None):
-    '''Handle login failures
-
-    Redirect to /user/login and flash an optional message
+    '''
+    Handle login failures. Redirect to /user/login and flash an optional message.
 
     :param notice: Optional notice for the user (Default value = None)
     :param error: Optional error message for the user (Default value = None)
-
     '''
     if notice:
         toolkit.h.flash_notice(notice)
@@ -37,9 +34,8 @@ def login_failed(notice=None, error=None):
 
 
 def login_success(user_name, came_from):
-    '''Handle login success
-
-    Saves the user in the session and redirects to user/logged_in
+    '''
+    Handle login success. Saves the user in the session and redirects to user/logged_in.
 
     :param user_name: The user name
     '''
@@ -49,25 +45,26 @@ def login_success(user_name, came_from):
 
 
 def get_user_dict(user_id):
-    """Calls the action API to get the detail for a user given their id
+    '''
+    Calls the action API to get the detail for a user given their id.
 
     @param user_id: The user id
-    """
+    '''
     context = {
         u'ignore_auth': True
-        }
+    }
     data_dict = {
         u'id': user_id
-        }
+    }
     return toolkit.get_action(u'user_show')(context, data_dict)
 
 
 def ckan_user_exists(user_name):
-    '''Check if a CKAN user name exists, and if that user is an LDAP user.
+    '''
+    Check if a CKAN user name exists, and if that user is an LDAP user.
 
     :param user_name: User name to check
-    :returns: Dictionary defining 'exists' and 'ldap'.
-
+    :return: Dictionary defining 'exists' and 'ldap'.
     '''
     try:
         user = get_user_dict(user_name)
@@ -75,27 +72,27 @@ def ckan_user_exists(user_name):
         return {
             u'exists': False,
             u'is_ldap': False
-            }
+        }
 
     ldap_user = LdapUser.by_user_id(user[u'id'])
     if ldap_user:
         return {
             u'exists': True,
             u'is_ldap': True
-            }
+        }
     else:
         return {
             u'exists': True,
             u'is_ldap': False
-            }
+        }
 
 
 def get_unique_user_name(base_name):
-    '''Create a unique, valid, non existent user name from the given base name
+    '''
+    Create a unique, valid, non existent user name from the given base name.
 
     :param base_name: Base name
-    :returns: A valid user name not currently in use based on base_name
-
+    :return: A valid user name not currently in use based on base_name
     '''
     base_name = re.sub(u'[^-a-z0-9_]', u'_', base_name.lower())
     base_name = base_name[0:100]
@@ -111,11 +108,11 @@ def get_unique_user_name(base_name):
 
 
 def get_or_create_ldap_user(ldap_user_dict):
-    '''Get or create a CKAN user from the data returned by the LDAP server
+    '''
+    Get or create a CKAN user from the data returned by the LDAP server.
 
     :param ldap_user_dict: Dictionary as returned by _find_ldap_user
-    :returns: The CKAN username of an existing user
-
+    :return: The CKAN username of an existing user
     '''
     # Look for existing user, and if found return it.
     ldap_user = LdapUser.by_ldap_id(ldap_user_dict[u'username'])
@@ -150,7 +147,7 @@ def get_or_create_ldap_user(ldap_user_dict):
         u'name': user_name,
         u'email': ldap_user_dict[u'email'],
         u'password': str(uuid.uuid4())
-        })
+    })
     if u'fullname' in ldap_user_dict:
         user_dict[u'fullname'] = ldap_user_dict[u'fullname']
     if u'about' in ldap_user_dict:
@@ -159,16 +156,16 @@ def get_or_create_ldap_user(ldap_user_dict):
         ckan_user = toolkit.get_action(u'user_update')(
             context={
                 u'ignore_auth': True
-                },
+            },
             data_dict=user_dict
-            )
+        )
     else:
         ckan_user = toolkit.get_action(u'user_create')(
             context={
                 u'ignore_auth': True
-                },
+            },
             data_dict=user_dict
-            )
+        )
     ldap_user = LdapUser(user_id=ckan_user[u'id'], ldap_id=ldap_user_dict[u'username'])
     Session.add(ldap_user)
     Session.commit()
@@ -177,24 +174,24 @@ def get_or_create_ldap_user(ldap_user_dict):
         toolkit.get_action(u'member_create')(
             context={
                 u'ignore_auth': True
-                },
+            },
             data_dict={
                 u'id': toolkit.config[u'ckanext.ldap.organization.id'],
                 u'object': user_name,
                 u'object_type': u'user',
                 u'capacity': toolkit.config[u'ckanext.ldap.organization.role']
-                }
-            )
+            }
+        )
     return user_name
 
 
 def check_ldap_password(cn, password):
-    '''Checks that the given cn/password credentials work on the given CN.
+    '''
+    Checks that the given cn/password credentials work on the given CN.
 
     :param cn: Common name to log on
     :param password: Password for cn
-    :returns: True on success, False on failure
-
+    :return: True on success, False on failure
     '''
     cnx = ldap.initialize(toolkit.config[u'ckanext.ldap.uri'], bytes_mode=False,
                           trace_level=toolkit.config[u'ckanext.ldap.trace_level'])
