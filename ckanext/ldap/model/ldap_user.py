@@ -9,8 +9,6 @@ import datetime
 from ckan import model
 from sqlalchemy import Column, ForeignKey, Table, orm, types
 
-__all__ = ['LdapUser']
-
 ldap_user_table = Table('ldap_user', model.meta.metadata,
                         Column('id', types.UnicodeText, primary_key=True,
                                default=model.types.make_uuid),

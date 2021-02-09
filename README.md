@@ -113,6 +113,11 @@ Name|Description|Options|Default
     ckan -c $CONFIG_FILE ldap setup-org
     ```
 
+2. `initdb`: ensure the tables needed by this extension exist.
+    ```bash
+    ckan -c $CONFIG_FILE ldap initdb
+    ```
+
 ## Templates
 
 This extension overrides `templates/user/login.html` and sets the form action to the LDAP login handler.
