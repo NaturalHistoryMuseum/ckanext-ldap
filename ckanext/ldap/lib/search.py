@@ -101,7 +101,7 @@ def ldap_search(cnx, filter_str, attributes, non_unique=u'raise'):
     except ldap.OPERATIONS_ERROR as e:
         log.error(
             u'LDAP query failed. Maybe you need auth credentials for performing searches? Error '
-            u'returned by the server: ' + e.info)
+            u'returned by the server: ' + str(e))
         return None
     except (ldap.NO_SUCH_OBJECT, ldap.REFERRAL) as e:
         log.error(
