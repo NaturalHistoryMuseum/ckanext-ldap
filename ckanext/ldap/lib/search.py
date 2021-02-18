@@ -96,9 +96,8 @@ def ldap_search(cnx, filter_str, attributes, non_unique='raise'):
         log.error('LDAP server is not reachable')
         return None
     except ldap.OPERATIONS_ERROR as e:
-        log.error(
-            'LDAP query failed. Maybe you need auth credentials for performing searches? Error '
-            'returned by the server: ' + e.info)
+        log.error(f'LDAP query failed. Maybe you need auth credentials for performing searches? '
+                  f'Error returned by the server: {e}')
         return None
     except (ldap.NO_SUCH_OBJECT, ldap.REFERRAL) as e:
         log.error(
