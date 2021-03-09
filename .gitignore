@@ -2,4 +2,6 @@
 *.pyc
 .noseids
 
-\.coverage
+
+.coverage
+.idea

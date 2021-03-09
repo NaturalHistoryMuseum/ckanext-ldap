@@ -4,7 +4,8 @@
 
 [![Travis](https://img.shields.io/travis/NaturalHistoryMuseum/ckanext-ldap/master.svg?style=flat-square)](https://travis-ci.org/NaturalHistoryMuseum/ckanext-ldap)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/master.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
-[![CKAN](https://img.shields.io/badge/ckan-2.9.0a-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
+[![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
+[![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
 
 _A CKAN extension that provides LDAP authentication._
 
@@ -75,10 +76,10 @@ These are the options that can be specified in your .ini config file.
 Name|Description|Options
 --|--|--
 `ckanext.ldap.uri`|The URI of the LDAP server, of the form _ldap://example.com_. You can use the URI to specify TLS (use 'ldaps' protocol), and the port number (suffix ':port').|True/False
-`ckanext.ldap.base_dn`|The base dn in which to perform the search. Example: 'ou=USERS,dc=example,dc=com'.|  
-`ckanext.ldap.search.filter`|This is the search string that is sent to the LDAP server, in which '{login}' is replaced by the user name provided by the user. Example: 'sAMAccountName={login}'. The search performed here **must** return exactly 0 or 1 entry.|  
-`ckanext.ldap.username`|The LDAP attribute that will be used as the CKAN username. This **must** be unique.|  
-`ckanext.ldap.email`|The LDAP attribute to map to the user's email address. This **must** be unique.|  
+`ckanext.ldap.base_dn`|The base dn in which to perform the search. Example: 'ou=USERS,dc=example,dc=com'.|
+`ckanext.ldap.search.filter`|This is the search string that is sent to the LDAP server, in which '{login}' is replaced by the user name provided by the user. Example: 'sAMAccountName={login}'. The search performed here **must** return exactly 0 or 1 entry.|
+`ckanext.ldap.username`|The LDAP attribute that will be used as the CKAN username. This **must** be unique.|
+`ckanext.ldap.email`|The LDAP attribute to map to the user's email address. This **must** be unique.|
 
 ## Other options
 
@@ -109,7 +110,12 @@ Name|Description|Options|Default
 
 1. `setup-org`: create the organisation specified in `ckanext.ldap.organization.id`.
     ```bash
-    paster --plugin=ckanext-ldap ldap setup-org -c $CONFIG_FILE
+    ckan -c $CONFIG_FILE ldap setup-org
+    ```
+
+2. `initdb`: ensure the tables needed by this extension exist.
+    ```bash
+    ckan -c $CONFIG_FILE ldap initdb
     ```
 
 ## Templates
@@ -127,10 +133,24 @@ The helper function `h.is_ldap_user()` is also provided for templates.
 
 
 # Testing
-
 _Test coverage is currently extremely limited._
 
-To run the tests, use nosetests inside your virtualenv. The `--nocapture` flag will allow you to see the debug statements.
+To run the tests in this extension, there is a Docker compose configuration available in this
+repository to make it easy.
+
+To run the tests against ckan 2.9.x on Python3:
+
+1. Build the required images
 ```bash
-nosetests --ckan --with-pylons=$TEST_CONFIG_FILE --where=$INSTALL_FOLDER/src/ckanext-ldap --nologcapture --nocapture
+docker-compose build
 ```
+
+2. Then run the tests.
+   The root of the repository is mounted into the ckan container as a volume by the Docker compose
+   configuration, so you should only need to rebuild the ckan image if you change the extension's
+   dependencies.
+```bash
+docker-compose run ckan
+```
+
+The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9`.
