@@ -104,6 +104,23 @@ Name|Description|Options|Default
 
 # Usage
 
+## Example Test Configuration
+To test that the extension is working correctly without having to set up an LDAP service yourself, you can try this config snippet:
+
+```ini
+ckanext.ldap.uri = ldap://ldap.forumsys.com:389
+ckanext.ldap.base_dn = dc=example,dc=com
+ckanext.ldap.search.filter = cn=*{login}*
+ckanext.ldap.username = cn
+ckanext.ldap.auth.dn = cn=read-only-admin,dc=example,dc=com
+ckanext.ldap.email = mail
+ckanext.ldap.auth.password = password
+ckanext.ldap.auth.method = SIMPLE
+```
+
+See [here](https://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/) for more information.
+Then just login with `tesla` or `gauss` for example with `password` as the password.
+
 ## Commands
 
 ### `ldap`
