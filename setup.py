@@ -35,7 +35,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'python-ldap==3.0.0',
+        'python-ldap==3.4.0',
     ],
     entry_points='''
         [ckan.plugins]
