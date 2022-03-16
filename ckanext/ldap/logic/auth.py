@@ -3,6 +3,8 @@ from ckan.plugins import toolkit
 from ckanext.ldap.lib.search import find_ldap_user
 from ckanext.ldap.model.ldap_user import LdapUser
 
+from ckan.common import asbool
+
 
 @toolkit.chained_auth_function
 @toolkit.auth_allow_anonymous_access
@@ -56,4 +58,17 @@ def user_update(next_auth, context, data_dict):
                     'msg': toolkit._('An LDAP user by that name already exists')
                 }
 
+    return next_auth(context, data_dict)
+
+
+@toolkit.chained_auth_function
+@toolkit.auth_allow_anonymous_access
+def user_reset(next_auth, context, data_dict):
+    if not asbool(toolkit.config.get('ckanext.ldap.allow_password_reset', True)):
+        ldap_user = LdapUser.by_user_id(context['user'])
+        if ldap_user is not None:
+            return {
+                'success': False,
+                'msg': toolkit._('Cannot reset password for LDAP user')
+            }
     return next_auth(context, data_dict)

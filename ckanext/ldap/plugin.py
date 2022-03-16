@@ -10,7 +10,7 @@ from ckan.common import session
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 from ckanext.ldap import routes, cli
 from ckanext.ldap.lib.helpers import get_login_action, is_ldap_user
-from ckanext.ldap.logic.auth import user_create, user_update
+from ckanext.ldap.logic.auth import user_create, user_update, user_reset
 from ckanext.ldap.model.ldap_user import setup as model_setup
 
 log = logging.getLogger(__name__)
@@ -58,7 +58,8 @@ class LdapPlugin(SingletonPlugin):
         '''Implements IAuthFunctions.get_auth_functions'''
         return {
             'user_update': user_update,
-            'user_create': user_create
+            'user_create': user_create,
+            'user_reset': user_reset,
         }
 
     def configure(self, config):
