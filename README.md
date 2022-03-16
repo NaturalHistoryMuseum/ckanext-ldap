@@ -100,6 +100,7 @@ Name|Description|Options|Default
 `ckanext.ldap.migrate`| If true this will change an existing CKAN user with the same username to an LDAP user. Otherwise, an exception `UserConflictError`is raised if LDAP-login with an already existing local CKAN username is attempted. This option provides a migration path from local CKAN authentication to LDAP authentication: Rename all users to their LDAP usernames and instruct them to login with their LDAP credentials. Migration then happens transparently.|True, False|False
 `ckanext.ldap.debug_level`|[python-ldap debug level](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=debug_level#ldap.OPT_DEBUG_LEVEL).||0
 `ckanext.ldap.trace_level`|[python-ldap trace level](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=trace_level#ldap.initialize).||0
+`ckanext.ldap.allow_password_reset`|If true, allows LDAP users to reset their passwords, if false, disallows this functionality. Note that if this is true, the password that is reset is the CKAN user password, not the LDAP one. If set to false, the request to reset will be denied only if the user is an LDAP user, if not they will be allowed to reset regardless of the value of this option.|true,false|true|
 
 
 # Usage

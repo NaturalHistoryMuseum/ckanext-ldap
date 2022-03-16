@@ -1,7 +1,7 @@
 import click
-
 from ckan.plugins import toolkit
-from ckanext.ldap.model.ldap_user import ldap_user_table
+
+from ckanext.ldap.lib.utils import init_tables
 
 
 def get_commands():
@@ -21,11 +21,10 @@ def init_db():
     '''
     Ensures the database tables we need exist in the database and creates them if they don't.
     '''
-    if not ldap_user_table.exists():
-        ldap_user_table.create()
-        click.secho(f'Created {ldap_user_table.name} table', fg='green')
+    if init_tables():
+        click.secho(f'Initialised tables', fg='green')
     else:
-        click.secho(f'Table {ldap_user_table.name} already exists', fg='green')
+        click.secho(f'Tables already existed', fg='green')
 
 
 @ldap.command(name='setup-org')
