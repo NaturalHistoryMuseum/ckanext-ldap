@@ -62,7 +62,6 @@ def user_update(next_auth, context, data_dict):
 
 
 @toolkit.chained_auth_function
-@toolkit.auth_allow_anonymous_access
 def user_reset(next_auth, context, data_dict):
     if not asbool(toolkit.config.get('ckanext.ldap.allow_password_reset', True)):
         ldap_user = LdapUser.by_user_id(context['user'])
