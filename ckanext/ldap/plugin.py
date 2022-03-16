@@ -10,8 +10,7 @@ from ckan.common import session
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 from ckanext.ldap import routes, cli
 from ckanext.ldap.lib.helpers import get_login_action, is_ldap_user
-from ckanext.ldap.logic.auth.create import user_create
-from ckanext.ldap.logic.auth.update import user_update
+from ckanext.ldap.logic.auth import user_create, user_update
 from ckanext.ldap.model.ldap_user import setup as model_setup
 
 log = logging.getLogger(__name__)
