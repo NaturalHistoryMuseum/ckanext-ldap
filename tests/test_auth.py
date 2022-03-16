@@ -1,6 +1,7 @@
 import pytest
 
 from ckan.logic import check_access, NotAuthorized
+from ckan.plugins import toolkit
 from ckan.tests import factories
 from mock import patch, MagicMock
 
@@ -16,6 +17,7 @@ from mock import patch, MagicMock
 class TestAuthPasswordReset:
 
     def test_default_is_allow(self):
+        assert 'ckanext.ldap.allow_password_reset' not in toolkit.config
         user = factories.User()
         assert check_access('user_reset', {'user': user['name']})
 
