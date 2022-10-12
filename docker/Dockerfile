@@ -3,7 +3,7 @@ FROM naturalhistorymuseum/ckantest:0.1
 # these two are required by ckanext-ldap
 RUN apt-get -q -y install libldap2-dev libsasl2-dev \
     && apt-get -q clean \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /base/src/ckanext-ldap
 
