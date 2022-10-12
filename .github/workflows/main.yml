@@ -1,0 +1,25 @@
+name: Tests
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Build images
+        run: docker-compose build
+
+      - name: Run tests
+        run: docker-compose run ckan
+
+      - name: Run coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: docker-compose run -e COVERALLS_REPO_TOKEN ckan coveralls --service=github
+
