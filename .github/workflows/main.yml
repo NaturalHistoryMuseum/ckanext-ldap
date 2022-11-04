@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout source code
@@ -20,6 +20,5 @@ jobs:
 
       - name: Run coveralls
         env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: docker-compose run -e COVERALLS_REPO_TOKEN ckan coveralls --service=github
-
