@@ -49,7 +49,7 @@ build-backend = "setuptools.build_meta"
 zip-safe = false
 
 [tool.setuptools.packages.find]
-exclude = ["tests"]
+exclude = ["tests", "docs"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
