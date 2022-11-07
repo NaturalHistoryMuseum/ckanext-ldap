@@ -30,6 +30,13 @@ test = [
     "pytest-cov>=2.7.1",
     "coveralls"
 ]
+docs = [
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material",
+    "mkdocs-gen-files",
+    "mkdocs-section-index"
+]
 
 [project.urls]
 repository = "https://github.com/NaturalHistoryMuseum/ckanext-ldap"
