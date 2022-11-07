@@ -2,8 +2,7 @@ version: 2
 
 python:
   install:
-    - method: pip
-      path: .[docs]
+    - requirements: docs/requirements.txt
 
 mkdocs:
   configuration: mkdocs.yml
