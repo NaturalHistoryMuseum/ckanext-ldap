@@ -1,0 +1,83 @@
+[project]
+name = "ckanext-ldap"
+version = "3.1.2"
+description = "A CKAN extension that provides LDAP authentication."
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "GPL-3.0-or-later"}
+authors = [
+    { name = "Natural History Museum", email = "data@nhm.ac.uk" }
+]
+keywords = ["CKAN", "data", "ldap"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8"
+]
+dependencies = [
+    "ckantools==0.2.0",
+    "python-ldap==3.4.0"
+]
+
+[project.optional-dependencies]
+test = [
+    "mock",
+    "pytest>=4.6.5",
+    "pytest-cov>=2.7.1",
+    "coveralls"
+]
+docs = [
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material",
+    "mkdocs-gen-files",
+    "mkdocs-section-index"
+]
+
+[project.urls]
+repository = "https://github.com/NaturalHistoryMuseum/ckanext-ldap"
+changelog = "https://github.com/NaturalHistoryMuseum/ckanext-ldap/blob/main/CHANGELOG.md"
+
+[project.entry-points."ckan.plugins"]
+ldap = "ckanext.ldap.plugin:LdapPlugin"
+
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[tool]
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+exclude = ["tests"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "3.1.2"
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_incremental = false
+version_files = [
+    "pyproject.toml:version"
+]
+
+[tool.black]
+line-length = 88
+skip_string_normalization = true
+
+[tool.pylint]
+max-line-length = 88
+disable = ["C0114", "R0903"]
+
+[tool.docformatter]
+wrap-summaries = 88
+wrap-descriptions = 88
+pre-summary-newline = true
+make-summary-multi-line = true

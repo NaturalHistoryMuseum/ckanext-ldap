@@ -1,0 +1,36 @@
+site_name: ckanext-ldap
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/lightbulb
+      primary: green
+      accent: green
+    - scheme: slate
+      toggle:
+        icon: material/lightbulb-outline
+      primary: green
+      accent: green
+
+watch:
+  - ckanext
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: sphinx
+  - gen-files:
+      scripts:
+        - docs/_scripts/gen_api_pages.py
+  - section-index
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
