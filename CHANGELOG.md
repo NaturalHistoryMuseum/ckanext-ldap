@@ -2,6 +2,21 @@
 
 (This file may not be historically complete, as it is a recent addition to the project).
 
+## v3.1.3 (2022-11-07)
+
+### Fix
+
+- add the module name for coverage generation
+- use ckantest docker v0.2
+
+## v3.1.2 (2022-08-08)
+
+## v3.1.1 (2022-04-25)
+
+## v3.1.0 (2022-03-21)
+
+## v3.0.1 (2022-03-14)
+
 ## [3.0.0] - 2021-01-25
 
 - Drop python2 support, add complete python3.6-3.8 support
