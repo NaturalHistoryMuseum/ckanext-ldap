@@ -13,6 +13,8 @@ theme:
         icon: material/lightbulb-outline
       primary: green
       accent: green
+  logo: assets/logo.png
+  favicon: assets/logo.png
 
 watch:
   - ckanext
