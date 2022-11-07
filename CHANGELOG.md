@@ -2,6 +2,12 @@
 
 (This file may not be historically complete, as it is a recent addition to the project).
 
+## v3.1.4 (2022-11-07)
+
+### Fix
+
+- move docs requirements into separate file
+
 ## v3.1.3 (2022-11-07)
 
 ### Fix
