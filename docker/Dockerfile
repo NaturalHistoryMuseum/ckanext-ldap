@@ -1,4 +1,4 @@
-FROM naturalhistorymuseum/ckantest:0.1
+FROM naturalhistorymuseum/ckantest:0.2
 
 # required by python-ldap
 RUN apt-get -q -y install libldap2-dev libsasl2-dev \
@@ -18,4 +18,4 @@ RUN pip install -e .[test]
 ENTRYPOINT ["/bin/bash", "/opt/waits/basic.sh"]
 
 # run the tests with coverage output
-CMD ["bash", "docker/run-tests.sh"]
+CMD ["bash", "/opt/scripts/run-tests.sh", "ckanext.ldap"]
