@@ -6,6 +6,7 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: name-tests-test
+        args: ["--pytest-test-first"]
       - id: trailing-whitespace
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v2.35.0
