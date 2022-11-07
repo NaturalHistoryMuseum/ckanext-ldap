@@ -18,4 +18,4 @@ jobs:
       - name: Run tests
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: docker-compose run -e COVERALLS_REPO_TOKEN ckan bash /opt/scripts/run-tests.sh -c
+        run: docker-compose run -e COVERALLS_REPO_TOKEN ckan bash /opt/scripts/run-tests.sh -c ckanext.ldap
