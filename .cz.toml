@@ -11,7 +11,7 @@ version_files = [
 [tool.commitizen.customize]
 bump_pattern = "^(break|feat|fix|new|patch)"
 bump_map = { "break" = "MAJOR", "feat" = "MINOR", "fix" = "PATCH", "new" = "MINOR", "patch" = "PATCH" }
-message_template = ": "
+message_template = "{{ prefix }}{% if scope %}({{ scope }}){% endif %}: {{ subject }}{% if body %}\n\n{% if is_breaking_change %}BREAKING CHANGE: {% endif %}{{ body }}{% endif %}{% if footer %}\n\nCloses: {{ footer }}{% endif %}"
 
 [[tool.commitizen.customize.questions]]
 type = "list"
