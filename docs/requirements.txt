@@ -3,3 +3,4 @@ mkdocstrings[python]
 mkdocs-material
 mkdocs-gen-files
 mkdocs-section-index
+mkdocs-include-markdown-plugin
