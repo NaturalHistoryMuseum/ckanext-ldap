@@ -1,5 +1,5 @@
 {%
-    include-markdown "../README.md"
+    include-markdown "../../README.md"
     start="<!--usage-start-->"
     end="<!--usage-end-->"
 %}
