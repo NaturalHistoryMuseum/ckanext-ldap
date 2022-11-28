@@ -1,18 +1,21 @@
+<!--header-start-->
 <img src=".github/nhm-logo.svg" align="left" width="150px" height="100px" hspace="40"/>
 
 # ckanext-ldap
 
 [![Tests](https://img.shields.io/github/workflow/status/NaturalHistoryMuseum/ckanext-ldap/Tests?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-ldap/actions/workflows/main.yml)
-[![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/master.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
+[![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
 [![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
 [![Docs](https://img.shields.io/readthedocs/ckanext-ldap?style=flat-square)](https://ckanext-ldap.readthedocs.io)
 
 _A CKAN extension that provides LDAP authentication._
 
+<!--header-end-->
 
 # Overview
 
+<!--overview-start-->
 This plugin provides LDAP authentication for CKAN.
 
 Features include:
@@ -22,9 +25,11 @@ Features include:
 - Can add LDAP users to a given organization automatically;
 - Works with Active Directory.
 
+<!--overview-end-->
 
 # Installation
 
+<!--installation-start-->
 Path variables used below:
 - `$INSTALL_FOLDER` (i.e. where CKAN is installed), e.g. `/usr/lib/ckan/default`
 - `$CONFIG_FILE`, e.g. `/etc/ckan/default/development.ini`
@@ -68,8 +73,11 @@ Path variables used below:
   ckan.plugins = ... ldap
   ```
 
+<!--installation-end-->
+
 # Configuration
 
+<!--configuration-start-->
 These are the options that can be specified in your .ini config file.
 
 ## LDAP configuration **[REQUIRED]**
@@ -103,9 +111,11 @@ Name|Description|Options|Default
 `ckanext.ldap.trace_level`|[python-ldap trace level](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=trace_level#ldap.initialize). **Security warning**: it is strongly recommended to keep this parameter set to 0 (zero) on production systems, otherwise [plaintext passwords will be logged by `python-ldap`](https://github.com/python-ldap/python-ldap/issues/384)|0-9|0
 `ckanext.ldap.allow_password_reset`|If true, allows LDAP users to reset their passwords, if false, disallows this functionality. Note that if this is true, the password that is reset is the CKAN user password, not the LDAP one. If set to false, the request to reset will be denied only if the user is an LDAP user, if not they will be allowed to reset regardless of the value of this option.|True/False|true|
 
+<!--configuration-end-->
 
 # Usage
 
+<!--usage-start-->
 ## Example Test Configuration
 To test that the extension is working correctly without having to set up an LDAP service yourself, you can try this config snippet:
 
@@ -150,12 +160,12 @@ To use it elsewhere:
 
 The helper function `h.is_ldap_user()` is also provided for templates.
 
+<!--usage-end-->
 
 # Testing
-_Test coverage is currently extremely limited._
 
-To run the tests in this extension, there is a Docker compose configuration available in this
-repository to make it easy.
+<!--testing-start-->
+There is a Docker compose configuration available in this repository to make it easier to run tests.
 
 To run the tests against ckan 2.9.x on Python3:
 
@@ -172,4 +182,6 @@ docker-compose build
 docker-compose run ckan
 ```
 
-The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9`.
+The ckan image uses the Dockerfile in the `docker/` folder.
+
+<!--testing-end-->

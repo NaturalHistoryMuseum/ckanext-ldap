@@ -13,6 +13,8 @@ theme:
         icon: material/lightbulb-outline
       primary: green
       accent: green
+  logo: assets/logo.png
+  favicon: assets/logo.png
 
 watch:
   - ckanext
@@ -29,6 +31,7 @@ plugins:
       scripts:
         - docs/_scripts/gen_api_pages.py
   - section-index
+  - include-markdown
 
 markdown_extensions:
   - admonition

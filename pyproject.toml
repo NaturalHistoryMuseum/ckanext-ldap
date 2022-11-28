@@ -4,7 +4,7 @@ version = "3.1.4"
 description = "A CKAN extension that provides LDAP authentication."
 readme = "README.md"
 requires-python = ">=3.6"
-license = {text = "GPL-3.0-or-later"}
+license = { text = "GPL-3.0-or-later" }
 authors = [
     { name = "Natural History Museum", email = "data@nhm.ac.uk" }
 ]
@@ -19,7 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8"
 ]
 dependencies = [
-    "ckantools==0.2.0",
+    "ckantools>=0.3.0",
     "python-ldap==3.4.0"
 ]
 
@@ -49,14 +49,14 @@ build-backend = "setuptools.build_meta"
 zip-safe = false
 
 [tool.setuptools.packages.find]
-exclude = ["tests"]
+exclude = ["tests", "docs"]
 
 [tool.commitizen]
-name = "cz_conventional_commits"
+name = "cz_nhm"
 version = "3.1.4"
 tag_format = "v$version"
 update_changelog_on_bump = true
-changelog_incremental = false
+changelog_incremental = true
 version_files = [
     "pyproject.toml:version"
 ]
