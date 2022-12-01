@@ -34,44 +34,40 @@ Path variables used below:
 - `$INSTALL_FOLDER` (i.e. where CKAN is installed), e.g. `/usr/lib/ckan/default`
 - `$CONFIG_FILE`, e.g. `/etc/ckan/default/development.ini`
 
-1. Clone the repository into the `src` folder:
+## Installing from PyPI
 
-  ```bash
-  cd $INSTALL_FOLDER/src
-  git clone https://github.com/NaturalHistoryMuseum/ckanext-ldap.git
-  ```
+```shell
+pip install ckanext-ldap
+```
+
+## Installing from source
+
+1. Clone the repository into the `src` folder:
+   ```shell
+   cd $INSTALL_FOLDER/src
+   git clone https://github.com/NaturalHistoryMuseum/ckanext-ldap.git
+   ```
 
 2. Activate the virtual env:
+   ```shell
+   . $INSTALL_FOLDER/bin/activate
+   ```
 
-  ```bash
-  . $INSTALL_FOLDER/bin/activate
-  ```
+3. Install via pip:
+   ```shell
+   pip install $INSTALL_FOLDER/src/ckanext-ldap
+   ```
 
-3. Install the requirements for `python-ldap`, e.g.:
+### Installing in editable mode
 
-  ```bash
-  apt-get install libldap2-dev libsasl2-dev libssl-dev
-  ```
+Installing from a `pyproject.toml` in editable mode (i.e. `pip install -e`) requires `setuptools>=64`; however, CKAN 2.9 requires `setuptools==44.1.0`. See [our CKAN fork](https://github.com/NaturalHistoryMuseum/ckan) for a version of v2.9 that uses an updated setuptools if this functionality is something you need.
 
-4. Install the requirements from requirements.txt:
+## Post-install setup
 
-  ```bash
-  cd $INSTALL_FOLDER/src/ckanext-ldap
-  pip install -r requirements.txt
-  ```
-
-5. Run setup.py:
-
-  ```bash
-  cd $INSTALL_FOLDER/src/ckanext-ldap
-  python setup.py develop
-  ```
-
-6. Add 'ldap' to the list of plugins in your `$CONFIG_FILE`:
-
-  ```ini
-  ckan.plugins = ... ldap
-  ```
+1. Add 'ldap' to the list of plugins in your `$CONFIG_FILE`:
+   ```ini
+   ckan.plugins = ... ldap
+   ```
 
 <!--installation-end-->
 
