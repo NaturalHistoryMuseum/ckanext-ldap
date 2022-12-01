@@ -161,23 +161,21 @@ The helper function `h.is_ldap_user()` is also provided for templates.
 # Testing
 
 <!--testing-start-->
-There is a Docker compose configuration available in this repository to make it easier to run tests.
+There is a Docker compose configuration available in this repository to make it easier to run tests. The ckan image uses the Dockerfile in the `docker/` folder.
 
 To run the tests against ckan 2.9.x on Python3:
 
-1. Build the required images
-```bash
-docker-compose build
-```
+1. Build the required images:
+   ```shell
+   docker-compose build
+   ```
 
 2. Then run the tests.
    The root of the repository is mounted into the ckan container as a volume by the Docker compose
    configuration, so you should only need to rebuild the ckan image if you change the extension's
    dependencies.
-```bash
-docker-compose run ckan
-```
-
-The ckan image uses the Dockerfile in the `docker/` folder.
+   ```shell
+   docker-compose run ckan
+   ```
 
 <!--testing-end-->
