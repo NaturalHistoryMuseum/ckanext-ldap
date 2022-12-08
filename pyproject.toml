@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "ckantools>=0.3.0",
-    "python-ldap==3.4.0"
+    "python-ldap==3.4.3"
 ]
 
 [project.optional-dependencies]
