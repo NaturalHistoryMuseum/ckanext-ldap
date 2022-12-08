@@ -1,6 +1,6 @@
 [project]
 name = "ckanext-ldap"
-version = "3.2.1"
+version = "3.2.2"
 description = "A CKAN extension that provides LDAP authentication."
 readme = "README.md"
 requires-python = ">=3.6"
@@ -53,7 +53,7 @@ exclude = ["tests", "docs"]
 
 [tool.commitizen]
 name = "cz_nhm"
-version = "3.2.1"
+version = "3.2.2"
 tag_format = "v$version"
 update_changelog_on_bump = true
 changelog_incremental = true

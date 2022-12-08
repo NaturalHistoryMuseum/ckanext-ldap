@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.2 (2022-12-08)
+
+### Build System(s)
+
+- update python-ldap minor version
+
 ## v3.2.1 (2022-12-01)
 
 ### Docs
