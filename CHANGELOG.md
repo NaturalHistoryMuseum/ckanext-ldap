@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.2.3 (2022-12-12)
+
+### Style
+
+- change quotes in setup.py to single quotes
+
+### Build System(s)
+
+- include top-level data files in theme folder
+- add package data
+
 ## v3.2.2 (2022-12-08)
 
 ### Build System(s)
