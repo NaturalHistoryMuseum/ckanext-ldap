@@ -19,8 +19,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8"
 ]
 dependencies = [
-    "ckantools>=0.3.0",
-    "python-ldap==3.4.3"
+    "python-ldap==3.4.3",
+    "ckantools>=0.3.0"
 ]
 
 [project.optional-dependencies]
@@ -52,7 +52,7 @@ zip-safe = false
 exclude = ["tests", "docs"]
 
 [tool.setuptools.package-data]
-"ckanext.ldap.theme" = ["**/*"]
+"ckanext.ldap.theme" = ["*", "**/*"]
 
 [tool.commitizen]
 name = "cz_nhm"
