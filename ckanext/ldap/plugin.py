@@ -17,17 +17,17 @@ log = logging.getLogger(__name__)
 
 
 class ConfigError(Exception):
-    ''' '''
     pass
 
 
 class LdapPlugin(SingletonPlugin):
-    '''
-    LdapPlugin
+    """
+    LdapPlugin.
 
     This plugin provides Ldap authentication by implementing the IAuthenticator
     interface.
-    '''
+    """
+
     implements(interfaces.IAuthenticator)
     implements(interfaces.IConfigurable)
     implements(interfaces.IConfigurer)
@@ -41,13 +41,13 @@ class LdapPlugin(SingletonPlugin):
         return cli.get_commands()
 
     def update_config(self, config):
-        '''Implement IConfiguer.update_config
+        """
+        Implement IConfiguer.update_config.
 
         Add our custom template to the list of templates so we can override the login form.
 
         :param config:
-
-        '''
+        """
         toolkit.add_template_directory(config, 'templates')
 
     ## IBlueprint
@@ -55,7 +55,9 @@ class LdapPlugin(SingletonPlugin):
         return routes.blueprints
 
     def get_auth_functions(self):
-        '''Implements IAuthFunctions.get_auth_functions'''
+        """
+        Implements IAuthFunctions.get_auth_functions.
+        """
         return {
             'user_update': user_update,
             'user_create': user_create,
@@ -63,73 +65,44 @@ class LdapPlugin(SingletonPlugin):
         }
 
     def configure(self, config):
-        '''
-        Implementation of IConfigurable.configure
+        """
+        Implementation of IConfigurable.configure.
 
         :param config:
-        '''
+        """
         # Setup our models
         model_setup()
         # Our own config schema, defines required items, default values and
         # transform functions
         schema = {
-            'ckanext.ldap.uri': {
-                'required': True
-            },
-            'ckanext.ldap.base_dn': {
-                'required': True
-            },
-            'ckanext.ldap.search.filter': {
-                'required': True
-            },
-            'ckanext.ldap.username': {
-                'required': True
-            },
-            'ckanext.ldap.email': {
-                'required': True
-            },
+            'ckanext.ldap.uri': {'required': True},
+            'ckanext.ldap.base_dn': {'required': True},
+            'ckanext.ldap.search.filter': {'required': True},
+            'ckanext.ldap.username': {'required': True},
+            'ckanext.ldap.email': {'required': True},
             'ckanext.ldap.auth.dn': {},
-            'ckanext.ldap.auth.password': {
-                'required_if': 'ckanext.ldap.auth.dn'
-            },
+            'ckanext.ldap.auth.password': {'required_if': 'ckanext.ldap.auth.dn'},
             'ckanext.ldap.auth.method': {
                 'default': 'SIMPLE',
-                'validate': _allowed_auth_methods
+                'validate': _allowed_auth_methods,
             },
             'ckanext.ldap.auth.mechanism': {
                 'default': 'DIGEST-MD5',
-                'validate': _allowed_auth_mechanisms
+                'validate': _allowed_auth_mechanisms,
             },
             'ckanext.ldap.search.alt': {},
-            'ckanext.ldap.search.alt_msg': {
-                'required_if': 'ckanext.ldap.search.alt'
-            },
+            'ckanext.ldap.search.alt_msg': {'required_if': 'ckanext.ldap.search.alt'},
             'ckanext.ldap.fullname': {},
             'ckanext.ldap.organization.id': {},
             'ckanext.ldap.organization.role': {
                 'default': 'member',
-                'validate': _allowed_roles
+                'validate': _allowed_roles,
             },
-            'ckanext.ldap.ckan_fallback': {
-                'default': False,
-                'parse': toolkit.asbool
-            },
-            'ckanext.ldap.prevent_edits': {
-                'default': False,
-                'parse': toolkit.asbool
-            },
-            'ckanext.ldap.migrate': {
-                'default': False,
-                'parse': toolkit.asbool
-            },
-            'ckanext.ldap.debug_level': {
-                'default': 0,
-                'parse': toolkit.asint
-            },
-            'ckanext.ldap.trace_level': {
-                'default': 0,
-                'parse': toolkit.asint
-            },
+            'ckanext.ldap.ckan_fallback': {'default': False, 'parse': toolkit.asbool},
+            'ckanext.ldap.prevent_edits': {'default': False, 'parse': toolkit.asbool},
+            'ckanext.ldap.migrate': {'default': False, 'parse': toolkit.asbool},
+            'ckanext.ldap.debug_level': {'default': 0, 'parse': toolkit.asint},
+            'ckanext.ldap.trace_level': {'default': 0, 'parse': toolkit.asint},
         }
         errors = []
         for key, options in schema.items():
@@ -147,8 +120,10 @@ class LdapPlugin(SingletonPlugin):
             elif options.get('required', False):
                 errors.append('Configuration parameter {0} is required'.format(key))
             elif 'required_if' in options and options['required_if'] in toolkit.config:
-                errors.append('Configuration parameter {0} is required '
-                              'when {1} is present'.format(key, options['required_if']))
+                errors.append(
+                    'Configuration parameter {0} is required '
+                    'when {1} is present'.format(key, options['required_if'])
+                )
             elif 'default' in options:
                 toolkit.config[key] = options['default']
 
@@ -157,17 +132,17 @@ class LdapPlugin(SingletonPlugin):
 
     # IAuthenticator
     def login(self):
-        '''
-        We don't need to do anything here as we override the form & implement our own controller
-        action.
-        '''
+        """
+        We don't need to do anything here as we override the form & implement our own
+        controller action.
+        """
         pass
 
     # IAuthenticator
     def identify(self):
-        '''
-        Identify which user (if any) is logged in via this plugin
-        '''
+        """
+        Identify which user (if any) is logged in via this plugin.
+        """
         # FIXME: This breaks if the current user changes their own user name.
         user = session.get('ckanext-ldap-user')
         if user:
@@ -185,18 +160,15 @@ class LdapPlugin(SingletonPlugin):
         return status_code, detail, headers, comment
 
     def _delete_session_items(self):
-        '''
+        """
         Delete user details stored in the session by this plugin.
-        '''
+        """
         if 'ckanext-ldap-user' in session:
             del session['ckanext-ldap-user']
             session.save()
 
     def get_helpers(self):
-        return {
-            'is_ldap_user': is_ldap_user,
-            'get_login_action': get_login_action
-        }
+        return {'is_ldap_user': is_ldap_user, 'get_login_action': get_login_action}
 
 
 def _allowed_roles(v):
