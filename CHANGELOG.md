@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.2.4 (2023-01-25)
+
+### Fix
+
+- move templates into theme directory
+
+### Style
+
+- fix some auto style issues
+
+### Build System(s)
+
+- **docker**: use 'latest' tag for test docker image
+
 ## v3.2.3 (2022-12-12)
 
 ### Style
