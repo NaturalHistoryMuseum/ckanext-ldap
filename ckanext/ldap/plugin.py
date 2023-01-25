@@ -48,7 +48,7 @@ class LdapPlugin(SingletonPlugin):
 
         :param config:
         """
-        toolkit.add_template_directory(config, 'templates')
+        toolkit.add_template_directory(config, 'theme/templates')
 
     ## IBlueprint
     def get_blueprint(self):
