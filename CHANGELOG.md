@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.6 (2023-01-31)
+
+### Docs
+
+- **readme**: change logo url from blob to raw
+
 ## v3.2.5 (2023-01-31)
 
 ### Docs
