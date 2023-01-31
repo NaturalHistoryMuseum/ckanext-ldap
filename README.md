@@ -1,9 +1,9 @@
 <!--header-start-->
-<img src=".github/nhm-logo.svg" align="left" width="150px" height="100px" hspace="40"/>
+<img src="https://github.com/NaturalHistoryMuseum/ckanext-ldap/blob/main/.github/nhm-logo.svg" align="left" width="150px" height="100px" hspace="40"/>
 
 # ckanext-ldap
 
-[![Tests](https://img.shields.io/github/workflow/status/NaturalHistoryMuseum/ckanext-ldap/Tests?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-ldap/actions/workflows/main.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/NaturalHistoryMuseum/ckanext-ldap/main.yml?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-ldap/actions/workflows/main.yml)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
 [![CKAN](https://img.shields.io/badge/ckan-2.9.7-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
