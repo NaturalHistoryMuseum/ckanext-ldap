@@ -93,6 +93,7 @@ class LdapPlugin(SingletonPlugin):
             'ckanext.ldap.search.alt': {},
             'ckanext.ldap.search.alt_msg': {'required_if': 'ckanext.ldap.search.alt'},
             'ckanext.ldap.fullname': {},
+            'ckanext.ldap.about': {},
             'ckanext.ldap.organization.id': {},
             'ckanext.ldap.organization.role': {
                 'default': 'member',
