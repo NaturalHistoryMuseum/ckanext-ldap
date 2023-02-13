@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.2.7 (2023-02-13)
+
+### Fix
+
+- add 'about' key to schema
+
+### Style
+
+- add whitespace in schema
+
 ## v3.2.6 (2023-01-31)
 
 ### Docs
