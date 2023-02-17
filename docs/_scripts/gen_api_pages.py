@@ -20,8 +20,9 @@ py_files = sorted(Path(root).rglob('*.py'))
 for path in py_files:
     try:
         path.relative_to('ckanext/ldap/migration')
-    except ValueError:
         continue
+    except ValueError:
+        pass
 
     module_path = path.relative_to(root).with_suffix('')
     doc_path = path.relative_to(root).with_suffix('.md')
