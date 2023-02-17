@@ -18,6 +18,11 @@ root = 'ckanext'
 py_files = sorted(Path(root).rglob('*.py'))
 
 for path in py_files:
+    try:
+        path.relative_to('ckanext/ldap/migration')
+    except ValueError:
+        continue
+
     module_path = path.relative_to(root).with_suffix('')
     doc_path = path.relative_to(root).with_suffix('.md')
     full_doc_path = Path('API', doc_path)
@@ -35,7 +40,7 @@ for path in py_files:
 
     nav[parts] = doc_path.as_posix()
 
-    with mkdocs_gen_files.open(full_doc_path, "w") as fd:
+    with mkdocs_gen_files.open(full_doc_path, 'w') as fd:
         ident = '.'.join(parts)
         fd.write(f'::: ckanext.{ident}')
 
