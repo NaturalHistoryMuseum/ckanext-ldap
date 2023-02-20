@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.2.8 (2023-02-20)
+
+### Docs
+
+- fix api docs generation script
+
+### Chores/Misc
+
+- small fixes to align with other extensions
+
 ## v3.2.7 (2023-02-13)
 
 ### Fix
