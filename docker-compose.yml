@@ -30,6 +30,7 @@ services:
     environment:
       - DATASTORE_READONLY_PASSWORD=password
       - POSTGRES_PASSWORD=password
+      - PGDATA=/var/lib/postgresql/data/db
     logging:
       driver: none
 
