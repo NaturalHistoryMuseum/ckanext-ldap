@@ -1,0 +1,27 @@
+name: Sync branches
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    name: "Sync dev and patch branches to latest commit"
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          fetch-depth: 0
+      - name: Sync dev branch
+        uses: connor-baer/action-sync-branch@main
+        with:
+          branch: dev
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Sync patch branch
+        uses: connor-baer/action-sync-branch@main
+        with:
+          branch: patch
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
