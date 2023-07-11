@@ -13,8 +13,8 @@ theme:
         icon: material/lightbulb-outline
       primary: green
       accent: green
-  logo: assets/logo.png
-  favicon: assets/logo.png
+  logo: https://data.nhm.ac.uk/images/nhm_logo.svg
+  favicon: https://data.nhm.ac.uk/images/icons/favicon.svg
 
 watch:
   - ckanext
