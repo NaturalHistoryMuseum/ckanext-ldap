@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.10 (2023-07-17)
+
+### Docs
+
+- update logos
+
 ## v3.2.9 (2023-04-11)
 
 ### Build System(s)
