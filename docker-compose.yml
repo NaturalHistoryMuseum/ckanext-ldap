@@ -1,10 +1,25 @@
 version: "3"
 
 services:
-  ckan:
+  latest:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile_latest
+    environment:
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+    depends_on:
+      - db
+      - solr
+      - redis
+    volumes:
+      - ./ckanext:/base/src/ckanext-ldap/ckanext
+      - ./tests:/base/src/ckanext-ldap/tests
+
+  next:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile_next
     environment:
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1

@@ -175,7 +175,7 @@ To run the tests against ckan 2.9.x on Python3:
    configuration, so you should only need to rebuild the ckan image if you change the extension's
    dependencies.
    ```shell
-   docker-compose run ckan
+   docker-compose run latest
    ```
 
 <!--testing-end-->
