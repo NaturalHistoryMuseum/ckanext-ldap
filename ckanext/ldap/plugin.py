@@ -160,7 +160,7 @@ class LdapPlugin(SingletonPlugin):
         # In CKAN 2.10.0+, we also need to invoke the toolkit's
         # logout_user() command to clean up anything remaining
         # on the CKAN side.
-        if toolkit.check_ckan_version(min_version='2.10.0'):
+        if toolkit.check_ckan_version(min_version="2.10.0"):
             toolkit.logout_user()
 
     # IAuthenticator

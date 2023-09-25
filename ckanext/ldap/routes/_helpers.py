@@ -56,23 +56,26 @@ def login_success(user_name, came_from):
     '''
     # Where to send the user after this function ends.
     # Initialize this value with the default in CKAN < 2.10.0.
-    redirect_path = 'user.logged_in'
+    redirect_path = "user.logged_in"
 
     # In CKAN 2.10.0 (or, more precisely, ckan/ckan PR #6560
     # https://github.com/ckan/ckan/pull/6560), repoze.who was replaced by
     # flask-login, and the `/user/logged_in` endpoint was removed.
     # We need to retrieve the User object for the user and call
     # toolkit.login_user().
-    if toolkit.check_ckan_version(min_version='2.10.0'):
-        redirect_path = 'home.index'
-        user_login_path = 'user.login'
-        err_msg = 'An error occurred while processing your login. Please contact the system administrators.'
+    if toolkit.check_ckan_version(min_version="2.10.0"):
+        redirect_path = "home.index"
+        user_login_path = "user.login"
+        err_msg = ("An error occurred while processing your login. Please contact the "
+                   "system administrators.")
 
         try:
             # Look up the CKAN User object for user_name
             user_obj = User.by_name(user_name)
         except toolkit.ObjectNotFound as err:
-            log.error('User.by_name(%s) raised ObjectNotFound error: %s', user_name, err)
+            log.error(
+                "User.by_name(%s) raised ObjectNotFound error: %s", user_name, err
+            )
             toolkit.h.flash_error(err_msg)
             return toolkit.redirect_to(user_login_path)
 
@@ -89,7 +92,7 @@ def login_success(user_name, came_from):
             return toolkit.redirect_to(user_login_path)
 
     # Update the session & redirect
-    session['ckanext-ldap-user'] = user_name
+    session["ckanext-ldap-user"] = user_name
     session.save()
     return toolkit.redirect_to(redirect_path, came_from=came_from)
 
