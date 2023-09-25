@@ -11,7 +11,7 @@ import uuid
 import ldap
 import ldap.filter
 from ckan.common import session
-from ckan.model import Session
+from ckan.model import Session, User
 from ckan.plugins import toolkit
 
 from ckanext.ldap.lib.exceptions import UserConflictError
@@ -36,13 +36,62 @@ def login_failed(notice=None, error=None):
 
 def login_success(user_name, came_from):
     '''
-    Handle login success. Saves the user in the session and redirects to user/logged_in.
+    Handle login success. Behavior depends on CKAN version.
+
+    The CKAN version is tested via ckan.plugins.toolkit.check_ckan_version().
+
+    CKAN < 2.10.0:
+        Saves user_name in the session under the 'ckanext-ldap-user' key,
+        then redirects to /user/logged_in.
+
+    CKAN 2.10.0+:
+        Looks up the CKAN User object and invokes the login_user() command
+        (new in CKAN 2.10.0) to authenticate the user with flask-login.
+        If that succeeds, then this saves user_name in the session under
+        the 'ckanext-ldap-user' key before redirecting to /home/index.
 
     :param user_name: The user name
+    :param came_from: The value of the 'came_from' parameter sent with the
+                      original login request
     '''
+    # Where to send the user after this function ends.
+    # Initialize this value with the default in CKAN < 2.10.0.
+    redirect_path = 'user.logged_in'
+
+    # In CKAN 2.10.0 (or, more precisely, ckan/ckan PR #6560
+    # https://github.com/ckan/ckan/pull/6560), repoze.who was replaced by
+    # flask-login, and the `/user/logged_in` endpoint was removed.
+    # We need to retrieve the User object for the user and call
+    # toolkit.login_user().
+    if toolkit.check_ckan_version(min_version='2.10.0'):
+        redirect_path = 'home.index'
+        user_login_path = 'user.login'
+        err_msg = 'An error occurred while processing your login. Please contact the system administrators.'
+
+        try:
+            # Look up the CKAN User object for user_name
+            user_obj = User.by_name(user_name)
+        except toolkit.ObjectNotFound as err:
+            log.error('User.by_name(%s) raised ObjectNotFound error: %s', user_name, err)
+            toolkit.h.flash_error(err_msg)
+            return toolkit.redirect_to(user_login_path)
+
+        if user_obj is None:
+            log.error(f"User.by_name returned None for user '{user_name}'")
+            toolkit.h.flash_error(err_msg)
+            return toolkit.redirect_to(user_login_path)
+
+        # Register the login with flask-login via the toolkit's helper function
+        ok = toolkit.login_user(user_obj)
+        if not ok:
+            log.error(f"toolkit.login_user() returned False for user '{user_name}'")
+            toolkit.h.flash_error(err_msg)
+            return toolkit.redirect_to(user_login_path)
+
+    # Update the session & redirect
     session['ckanext-ldap-user'] = user_name
     session.save()
-    return toolkit.redirect_to('user.logged_in', came_from=came_from)
+    return toolkit.redirect_to(redirect_path, came_from=came_from)
 
 
 def get_user_dict(user_id):

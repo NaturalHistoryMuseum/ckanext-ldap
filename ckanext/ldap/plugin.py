@@ -154,7 +154,14 @@ class LdapPlugin(SingletonPlugin):
 
     # IAuthenticator
     def logout(self):
+        # Delete session items managed by ckanext-ldap
         self._delete_session_items()
+
+        # In CKAN 2.10.0+, we also need to invoke the toolkit's
+        # logout_user() command to clean up anything remaining
+        # on the CKAN side.
+        if toolkit.check_ckan_version(min_version='2.10.0'):
+            toolkit.logout_user()
 
     # IAuthenticator
     def abort(self, status_code, detail, headers, comment):
