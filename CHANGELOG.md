@@ -1,5 +1,31 @@
 # Changelog
 
+## v3.2.11 (2023-09-25)
+
+### Docs
+
+- update docker test service name in readme
+
+### Style
+
+- fix some minor formatting irregularities
+
+### Tests
+
+- sort out the CKAN 2.10 tests
+- add a test for login_success
+- add test for login_failed helper
+
+### Build System(s)
+
+- adds ckantest:next as a test target option
+
+### CI System(s)
+
+- add tests on next to ci
+- update docker test service name in github action workflow
+- fix tests, postgresql wasn't working
+
 ## v3.2.10 (2023-07-17)
 
 ### Docs
