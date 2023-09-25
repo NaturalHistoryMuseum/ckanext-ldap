@@ -5,7 +5,7 @@
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/NaturalHistoryMuseum/ckanext-ldap/main.yml?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-ldap/actions/workflows/main.yml)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
-[![CKAN](https://img.shields.io/badge/ckan-2.9.7-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
+[![CKAN](https://img.shields.io/badge/ckan-2.9.7+%20%7C%202.10-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
 [![Docs](https://img.shields.io/readthedocs/ckanext-ldap?style=flat-square)](https://ckanext-ldap.readthedocs.io)
 
@@ -175,7 +175,7 @@ To run the tests against ckan 2.9.x on Python3:
    configuration, so you should only need to rebuild the ckan image if you change the extension's
    dependencies.
    ```shell
-   docker-compose run ckan
+   docker-compose run latest
    ```
 
 <!--testing-end-->
