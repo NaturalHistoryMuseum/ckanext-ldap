@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: CKAN Ldap extension
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - name: Natural History Museum
+    city: London
+    country: GB
+    alias: NHM
+    email: data@nhm.ac.uk
+repository-code: 'https://github.com/NaturalHistoryMuseum/ckanext-ldap'
+abstract: A CKAN extension that provides LDAP authentication.
+keywords:
+  - ckan
+  - ckanext
+  - ldap
+license: GPL-3.0-or-later
+version: 3.2.11
