@@ -104,6 +104,7 @@ class LdapPlugin(SingletonPlugin):
             'ckanext.ldap.migrate': {'default': False, 'parse': toolkit.asbool},
             'ckanext.ldap.debug_level': {'default': 0, 'parse': toolkit.asint},
             'ckanext.ldap.trace_level': {'default': 0, 'parse': toolkit.asint},
+            'ckanext.ldap.ignore_referrals': {'default': False, 'parse': toolkit.asbool},
         }
         errors = []
         for key, options in schema.items():
