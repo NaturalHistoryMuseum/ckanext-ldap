@@ -25,6 +25,9 @@ def find_ldap_user(login):
     cnx = ldap.initialize(toolkit.config['ckanext.ldap.uri'], bytes_mode=False,
                           trace_level=toolkit.config['ckanext.ldap.trace_level'])
     cnx.set_option(ldap.OPT_NETWORK_TIMEOUT, 10)
+    if toolkit.config['ckanext.ldap.ignore_referrals']:
+        cnx.set_option(ldap.OPT_REFERRALS, 0)
+
     if toolkit.config.get('ckanext.ldap.auth.dn'):
         try:
             if toolkit.config['ckanext.ldap.auth.method'] == 'SIMPLE':
@@ -92,6 +95,8 @@ def ldap_search(cnx, filter_str, attributes, non_unique='raise'):
     try:
         res = cnx.search_s(toolkit.config['ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE,
                            filterstr=filter_str, attrlist=attributes)
+        if toolkit.config['ckanext.ldap.ignore_referrals']:
+            res = [ x for x in res if x[0] is not None ]
     except ldap.SERVER_DOWN:
         log.error('LDAP server is not reachable')
         return None
