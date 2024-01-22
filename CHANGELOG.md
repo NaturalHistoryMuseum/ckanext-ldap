@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.3.0 (2024-01-22)
+
+### Feature
+
+- add "ignore referrals" config option
+
+### Chores/Misc
+
+- add build section to read the docs config
+- add regex for version line in citation file
+- add citation.cff to list of files with version
+- add contributing guidelines
+- add code of conduct
+- add citation file
+- update support.md links
+
 ## v3.2.11 (2023-09-25)
 
 ### Docs
