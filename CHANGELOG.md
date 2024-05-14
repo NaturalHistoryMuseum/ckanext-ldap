@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.3.1 (2024-05-14)
+
+### Fix
+
+- inherit IAuthenticator methods to fix 2.10 issue
+
+### Docs
+
+- reformat readme
+- update readme to list 2.10 test running details
+
 ## v3.3.0 (2024-01-22)
 
 ### Feature
