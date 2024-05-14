@@ -19,9 +19,11 @@ _A CKAN extension that provides LDAP authentication._
 This plugin provides LDAP authentication for CKAN.
 
 Features include:
+
 - Imports username, full name, email and description;
 - Can match against several LDAP fields (eg. username or full name);
-- Allows to have LDAP only authentication, or combine LDAP and basic CKAN authentication;
+- Allows to have LDAP only authentication, or combine LDAP and basic CKAN
+  authentication;
 - Can add LDAP users to a given organization automatically;
 - Works with Active Directory.
 
@@ -31,6 +33,7 @@ Features include:
 
 <!--installation-start-->
 Path variables used below:
+
 - `$INSTALL_FOLDER` (i.e. where CKAN is installed), e.g. `/usr/lib/ckan/default`
 - `$CONFIG_FILE`, e.g. `/etc/ckan/default/development.ini`
 
@@ -60,7 +63,10 @@ pip install ckanext-ldap
 
 ### Installing in editable mode
 
-Installing from a `pyproject.toml` in editable mode (i.e. `pip install -e`) requires `setuptools>=64`; however, CKAN 2.9 requires `setuptools==44.1.0`. See [our CKAN fork](https://github.com/NaturalHistoryMuseum/ckan) for a version of v2.9 that uses an updated setuptools if this functionality is something you need.
+Installing from a `pyproject.toml` in editable mode (i.e. `pip install -e`)
+requires `setuptools>=64`; however, CKAN 2.9 requires `setuptools==44.1.0`.
+See [our CKAN fork](https://github.com/NaturalHistoryMuseum/ckan) for a version of v2.9
+that uses an updated setuptools if this functionality is something you need.
 
 ## Post-install setup
 
@@ -106,14 +112,18 @@ These are the options that can be specified in your .ini config file.
 | `ckanext.ldap.debug_level`          | [python-ldap debug level](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=debug_level#ldap.OPT_DEBUG_LEVEL). **Security warning**: it is strongly recommended to keep this parameter set to 0 (zero) on production systems, otherwise [plaintext passwords will be logged by `python-ldap`](https://github.com/python-ldap/python-ldap/issues/384)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 0-9                             | 0        |
 | `ckanext.ldap.trace_level`          | [python-ldap trace level](https://www.python-ldap.org/en/python-ldap-3.0.0b1/reference/ldap.html?highlight=trace_level#ldap.initialize). **Security warning**: it is strongly recommended to keep this parameter set to 0 (zero) on production systems, otherwise [plaintext passwords will be logged by `python-ldap`](https://github.com/python-ldap/python-ldap/issues/384)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 0-9                             | 0        |
 | `ckanext.ldap.allow_password_reset` | If true, allows LDAP users to reset their passwords, if false, disallows this functionality. Note that if this is true, the password that is reset is the CKAN user password, not the LDAP one. If set to false, the request to reset will be denied only if the user is an LDAP user, if not they will be allowed to reset regardless of the value of this option.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | True/False                      | true     |
-| `ckanext.ldap.ignore_referrals`     | If true, The plugin will ignore referral query results sent by the LDAP server. This might be necessary if your base_dn is at the domain level, but the LDAP server searches in multiple paths for the user, resulting in queries containing more than one result.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | True/False                      | false     |
+| `ckanext.ldap.ignore_referrals`     | If true, The plugin will ignore referral query results sent by the LDAP server. This might be necessary if your base_dn is at the domain level, but the LDAP server searches in multiple paths for the user, resulting in queries containing more than one result.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | True/False                      | false    |
+
 <!--configuration-end-->
 
 # Usage
 
 <!--usage-start-->
+
 ## Example Test Configuration
-To test that the extension is working correctly without having to set up an LDAP service yourself, you can try this config snippet:
+
+To test that the extension is working correctly without having to set up an LDAP service
+yourself, you can try this config snippet:
 
 ```ini
 ckanext.ldap.uri = ldap://ldap.forumsys.com:389
@@ -126,7 +136,8 @@ ckanext.ldap.auth.password = password
 ckanext.ldap.auth.method = SIMPLE
 ```
 
-See [here](https://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/) for more information.
+See [here](https://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/)
+for more information.
 Then just login with `tesla` or `gauss` for example with `password` as the password.
 
 ## Commands
@@ -145,7 +156,8 @@ Then just login with `tesla` or `gauss` for example with `password` as the passw
 
 ## Templates
 
-This extension overrides `templates/user/login.html` and sets the form action to the LDAP login handler.
+This extension overrides `templates/user/login.html` and sets the form action to the
+LDAP login handler.
 
 To use it elsewhere:
 
@@ -161,9 +173,10 @@ The helper function `h.is_ldap_user()` is also provided for templates.
 # Testing
 
 <!--testing-start-->
-There is a Docker compose configuration available in this repository to make it easier to run tests. The ckan image uses the Dockerfile in the `docker/` folder.
+There is a Docker compose configuration available in this repository to make it easier
+to run tests. The ckan image uses the Dockerfile in the `docker/` folder.
 
-To run the tests against ckan 2.9.x on Python3:
+To run the tests can be run against ckan 2.9.x and 2.10.x on Python3:
 
 1. Build the required images:
    ```shell
@@ -171,11 +184,15 @@ To run the tests against ckan 2.9.x on Python3:
    ```
 
 2. Then run the tests.
-   The root of the repository is mounted into the ckan container as a volume by the Docker compose
-   configuration, so you should only need to rebuild the ckan image if you change the extension's
-   dependencies.
+   The root of the repository is mounted into the ckan container as a volume by the
+   Docker compose configuration, so you should only need to rebuild the ckan image if
+   you change the extension's dependencies.
    ```shell
+   # run tests against ckan 2.9.x
    docker-compose run latest
+
+   # run tests against ckan 2.10.x
+   docker-compose run next
    ```
 
 <!--testing-end-->
