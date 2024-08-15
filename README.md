@@ -180,7 +180,7 @@ To run the tests can be run against ckan 2.9.x and 2.10.x on Python3:
 
 1. Build the required images:
    ```shell
-   docker-compose build
+   docker compose build
    ```
 
 2. Then run the tests.
@@ -189,10 +189,10 @@ To run the tests can be run against ckan 2.9.x and 2.10.x on Python3:
    you change the extension's dependencies.
    ```shell
    # run tests against ckan 2.9.x
-   docker-compose run latest
+   docker compose run latest
 
    # run tests against ckan 2.10.x
-   docker-compose run next
+   docker compose run next
    ```
 
 <!--testing-end-->
