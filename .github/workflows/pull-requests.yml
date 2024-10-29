@@ -1,0 +1,27 @@
+name: Validate pull requests
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  validate-commits:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Check commit message format
+        uses: webiny/action-conventional-commits@v1.3.0
+        with:
+          allowed-commit-types: 'feat,fix,refactor,perf,docs,style,test,build,ci,chore,new,patch,revert,ui'
+  pre-commit:
+    name: Run pre-commit checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
