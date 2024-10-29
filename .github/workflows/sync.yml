@@ -7,11 +7,11 @@ on:
 
 jobs:
   sync-branches:
+    name: Sync dev and patch branches to latest commit
     runs-on: ubuntu-latest
-    name: "Sync dev and patch branches to latest commit"
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           fetch-depth: 0
