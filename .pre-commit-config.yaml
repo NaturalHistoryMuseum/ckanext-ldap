@@ -7,14 +7,14 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: name-tests-test
-        args: ["--pytest-test-first"]
+        args: ['--pytest-test-first']
         exclude: ^tests/helpers/
       - id: trailing-whitespace
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.30.0
     hooks:
       - id: commitizen
-        additional_dependencies: ["cz-nhm"]
+        additional_dependencies: ['cz-nhm']
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.1
     hooks:
@@ -25,6 +25,8 @@ repos:
     rev: eb1df34
     hooks:
       - id: docformatter
+        args: [ '-i', '--config', './pyproject.toml' ]
+        additional_dependencies: ['tomli']
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
