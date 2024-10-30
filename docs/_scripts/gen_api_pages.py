@@ -1,6 +1,5 @@
 # !/usr/bin/env python
 # encoding: utf-8
-
 """
 Generate the code reference pages and navigation.
 

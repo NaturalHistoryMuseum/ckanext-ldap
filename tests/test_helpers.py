@@ -1,8 +1,8 @@
 import pytest
 from ckan.plugins import toolkit
-
-from ckanext.ldap.lib.helpers import is_ldap_user, get_login_action, decode_str
 from mock import MagicMock, patch
+
+from ckanext.ldap.lib.helpers import decode_str, get_login_action, is_ldap_user
 
 
 def test_is_ldap_user():
@@ -23,7 +23,6 @@ def test_is_ldap_user():
 @pytest.mark.usefixtures('with_plugins', 'with_request_context')
 @pytest.mark.filterwarnings('ignore::sqlalchemy.exc.SADeprecationWarning')
 class TestGetLoginAction:
-
     def test_with_came_from(self):
         toolkit.c.login_handler = '/somewhere?came_from=beans'
         action = get_login_action()

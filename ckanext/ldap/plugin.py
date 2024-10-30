@@ -8,9 +8,10 @@ import logging
 
 from ckan.common import session
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
-from ckanext.ldap import routes, cli
+
+from ckanext.ldap import cli, routes
 from ckanext.ldap.lib.helpers import get_login_action, is_ldap_user
-from ckanext.ldap.logic.auth import user_create, user_update, user_reset
+from ckanext.ldap.logic.auth import user_create, user_reset, user_update
 from ckanext.ldap.model.ldap_user import setup as model_setup
 
 log = logging.getLogger(__name__)
@@ -44,7 +45,8 @@ class LdapPlugin(SingletonPlugin):
         """
         Implement IConfiguer.update_config.
 
-        Add our custom template to the list of templates so we can override the login form.
+        Add our custom template to the list of templates so we can override the login
+        form.
 
         :param config:
         """
@@ -104,7 +106,10 @@ class LdapPlugin(SingletonPlugin):
             'ckanext.ldap.migrate': {'default': False, 'parse': toolkit.asbool},
             'ckanext.ldap.debug_level': {'default': 0, 'parse': toolkit.asint},
             'ckanext.ldap.trace_level': {'default': 0, 'parse': toolkit.asint},
-            'ckanext.ldap.ignore_referrals': {'default': False, 'parse': toolkit.asbool},
+            'ckanext.ldap.ignore_referrals': {
+                'default': False,
+                'parse': toolkit.asbool,
+            },
         }
         errors = []
         for key, options in schema.items():
@@ -161,7 +166,7 @@ class LdapPlugin(SingletonPlugin):
         # In CKAN 2.10.0+, we also need to invoke the toolkit's
         # logout_user() command to clean up anything remaining
         # on the CKAN side.
-        if toolkit.check_ckan_version(min_version="2.10.0"):
+        if toolkit.check_ckan_version(min_version='2.10.0'):
             toolkit.logout_user()
 
     # IAuthenticator
