@@ -41,7 +41,7 @@ This extension and [several others](https://github.com/search?q=topic:ckan+org:N
 
 The current core team consists of:
 - Josh ([@jrdh](https://github.com/jrdh)) - Technical Lead
-- Ginger ([@alycejenni](https://github.com/alycejenni)) - Software Engineer
+- Ginger ([@alycejenni](https://github.com/alycejenni)) - Senior Software Engineer
 
 
 ## Questions
@@ -81,7 +81,10 @@ The process is generally as follows:
 3. Make your changes, and commit often; each commit should only contain one change. See below for specifics on how to word your commits.
 4. Push your changes back to your fork.
 5. [Open a pull request](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#making-a-pull-request) in this repository, with the base branch set to **dev** and the compare branch set to your new branch. Provide a summary of your changes in the description.
-6. If the automatic tests fail (these may take a while), please go back to your code and try to make them pass. You may have to update the tests themselves. You don't have to close the pull request while you're doing this; it'll update as you add further commits.
+6. There are several automated checks that will run when you open the pull request. Try to make all of them pass. If you do not at least _attempt_ to make them pass, we will not merge your pull request.
+   1. Tests. Update them so that they pass, if necessary. New tests are always welcome in any pull request, but if you have added a new feature that has decreased the coverage, new tests are required.
+   2. Commit format validation. If you have not followed the conventional commits format for one or more of your commits, this will fail.
+   3. Code format validation. If you have not formatted your code correctly (using Ruff, docformatter, and/or Prettier), this will fail.
 7. Wait for feedback from one of the core maintainers. If it's been a week or so and we haven't responded, we may not have seen it. You can find other places to contact us in [SUPPORT.md](./.github/SUPPORT.md).
 
 ### Commits
@@ -142,9 +145,9 @@ cz c
 
 ##### pre-commit
 
-pre-commit is a tool that runs a variety of checks and modifications before a commit is made. You can check the [.pre-commit-config.yaml](./.pre-commit-config.yaml) file to see eaxtly what it's currently configured to do for this repository, but of particular note:
+pre-commit is a tool that runs a variety of checks and modifications before a commit is made. You can check the [.pre-commit-config.yaml](./.pre-commit-config.yaml) file to see exactly what it's currently configured to do for this repository, but of particular note:
 
-- reformats Python code with [Black](https://github.com/psf/black)
+- reformats Python code with [Ruff](https://docs.astral.sh/ruff)
 - reformats JavaScript and stylesheets with [Prettier](https://prettier.io)
 - reformats docstrings with [docformatter](https://github.com/PyCQA/docformatter)
 - checks your commit message is correcly formatted
@@ -161,15 +164,15 @@ pre-commit run
 
 Don't forget to stage any modifications that it makes! Once it runs without failing, then you can make your commit.
 
-Something to remember is that empty docstrings will cause conflicts between Black and docformatter and the checks will fail repeatedly - so don't leave your docstrings empty!
+Something to remember is that empty docstrings will cause conflicts between Ruff and docformatter and the checks will fail repeatedly - so don't leave your docstrings empty!
 
 ### Code changes and style guide
 
-We generally use external style guides and tools to help us maintain standardised code. Black and Prettier will be run with pre-commit.
+We generally use external style guides and tools to help us maintain standardised code. Ruff and Prettier will be run with pre-commit.
 
 #### Python
 
-We follow the [Black style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html), with the notable exception that we use single quotes.
+We use [Ruff](https://docs.astral.sh/ruff) to format our code, using defaults for everything except quote style (we use single quotes).
 
 We also _mostly_ use [CKAN's style](http://docs.ckan.org/en/latest/contributing/python.html), with the following exceptions:
 - prefer `f''` strings over `.format()`
@@ -178,7 +181,7 @@ We also _mostly_ use [CKAN's style](http://docs.ckan.org/en/latest/contributing/
 
 #### JavaScript and stylesheets (CSS, LESS, etc)
 
-We use [Prettier](https://prettier.io) to format these files.
+We use [Prettier](https://prettier.io) to format these files. As with Ruff, we use defaults for everything except quote style (we use single quotes).
 
 #### Accessibility
 
