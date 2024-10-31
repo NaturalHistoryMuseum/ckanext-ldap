@@ -113,7 +113,7 @@ def ckan_user_exists(user_name):
     Check if a CKAN user name exists, and if that user is an LDAP user.
 
     :param user_name: User name to check
-    :return: Dictionary defining 'exists' and 'ldap'.
+    :returns: Dictionary defining 'exists' and 'ldap'.
     """
     try:
         user = get_user_dict(user_name)
@@ -132,7 +132,7 @@ def get_unique_user_name(base_name):
     Create a unique, valid, non existent user name from the given base name.
 
     :param base_name: Base name
-    :return: A valid user name not currently in use based on base_name
+    :returns: A valid user name not currently in use based on base_name
     """
     base_name = re.sub('[^-a-z0-9_]', '_', base_name.lower())
     base_name = base_name[0:100]
@@ -153,7 +153,7 @@ def get_or_create_ldap_user(ldap_user_dict):
     Get or create a CKAN user from the data returned by the LDAP server.
 
     :param ldap_user_dict: Dictionary as returned by _find_ldap_user
-    :return: The CKAN username of an existing user
+    :returns: The CKAN username of an existing user
     """
     # Look for existing user, and if found return it.
     ldap_user = LdapUser.by_ldap_id(ldap_user_dict['username'])
@@ -232,7 +232,7 @@ def check_ldap_password(cn, password):
 
     :param cn: Common name to log on
     :param password: Password for cn
-    :return: True on success, False on failure
+    :returns: True on success, False on failure
     """
     cnx = ldap.initialize(
         toolkit.config['ckanext.ldap.uri'],
