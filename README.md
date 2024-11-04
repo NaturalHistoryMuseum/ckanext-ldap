@@ -1,9 +1,13 @@
 <!--header-start-->
-<img src="https://data.nhm.ac.uk/images/nhm_logo.svg" align="left" width="150px" height="100px" hspace="40"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://data.nhm.ac.uk/images/nhm_logo.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://data.nhm.ac.uk/images/nhm_logo_black.svg">
+  <img alt="The Natural History Museum logo." src="https://data.nhm.ac.uk/images/nhm_logo_black.svg" align="left" width="150px" height="100px" hspace="40">
+</picture>
 
 # ckanext-ldap
 
-[![Tests](https://img.shields.io/github/actions/workflow/status/NaturalHistoryMuseum/ckanext-ldap/main.yml?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-ldap/actions/workflows/main.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/NaturalHistoryMuseum/ckanext-ldap/tests.yml?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-ldap/actions/workflows/tests.yml)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-ldap/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-ldap)
 [![CKAN](https://img.shields.io/badge/ckan-2.9.7+%20%7C%202.10-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
