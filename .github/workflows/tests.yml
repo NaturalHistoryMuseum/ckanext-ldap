@@ -3,32 +3,31 @@ name: Tests
 on:
   push:
   workflow_dispatch:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   test_latest:
+    name: Run tests against ckantest latest
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
       - name: Build images
         run: docker compose build
-
-      - name: Run tests
+      - name: Run tests against latest
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: docker compose run -e COVERALLS_REPO_TOKEN latest bash /opt/scripts/run-tests.sh -c ckanext.ldap
-
   test_next:
+    name: Run tests against ckantest next
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
       - name: Build images
         run: docker compose build
-
-      - name: Run tests
-        run: docker compose run next bash /opt/scripts/run-tests.sh -c ckanext.ldap
+      - name: Run tests against next
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: docker compose run -e COVERALLS_REPO_TOKEN next bash /opt/scripts/run-tests.sh -c ckanext.ldap
