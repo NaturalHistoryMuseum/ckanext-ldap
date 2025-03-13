@@ -137,9 +137,7 @@ class LdapPlugin(SingletonPlugin):
 
         :param config:
         """
-        ldap.set_option(
-            ldap.OPT_DEBUG_LEVEL, config['ckanext.ldap.debug_level']
-        )
+        ldap.set_option(ldap.OPT_DEBUG_LEVEL, config['ckanext.ldap.debug_level'])
 
     # IAuthenticator
     def login(self):
