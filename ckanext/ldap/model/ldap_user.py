@@ -21,14 +21,6 @@ ldap_user_table = Table(
 )
 
 
-def setup():
-    """
-    Model setup; ensure our table exists.
-    """
-    if not ldap_user_table.exists() and model.user.user_table.exists():
-        ldap_user_table.create()
-
-
 class LdapUser(model.domain_object.DomainObject):
     """
     Represents an entry mapping a ldap id to a CKAN user.

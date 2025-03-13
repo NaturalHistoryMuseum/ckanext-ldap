@@ -79,6 +79,11 @@ that uses an updated setuptools if this functionality is something you need.
    ckan.plugins = ... ldap
    ```
 
+2. Upgrade the database to create the tables:
+   ```shell
+   ckan -c $CONFIG_FILE db upgrade -p ldap
+   ```
+
 <!--installation-end-->
 
 # Configuration
@@ -151,11 +156,6 @@ Then just login with `tesla` or `gauss` for example with `password` as the passw
 1. `setup-org`: create the organisation specified in `ckanext.ldap.organization.id`.
     ```bash
     ckan -c $CONFIG_FILE ldap setup-org
-    ```
-
-2. `initdb`: ensure the tables needed by this extension exist.
-    ```bash
-    ckan -c $CONFIG_FILE ldap initdb
     ```
 
 ## Templates
