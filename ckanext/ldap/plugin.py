@@ -6,6 +6,7 @@
 
 import logging
 
+import ldap
 from ckan.common import session
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 
@@ -133,6 +134,10 @@ class LdapPlugin(SingletonPlugin):
 
         if len(errors):
             raise ConfigError('\n'.join(errors))
+
+        ldap.set_option(
+            ldap.OPT_DEBUG_LEVEL, toolkit.config['ckanext.ldap.debug_level']
+        )
 
     # IAuthenticator
     def login(self):

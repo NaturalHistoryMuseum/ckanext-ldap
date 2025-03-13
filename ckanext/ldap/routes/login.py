@@ -4,7 +4,6 @@
 # This file is part of ckanext-ldap
 # Created by the Natural History Museum in London, UK
 
-import ldap
 from ckan.model import User
 from ckan.plugins import toolkit
 from flask import Blueprint
@@ -15,11 +14,6 @@ from ckanext.ldap.lib.search import find_ldap_user
 from . import _helpers
 
 blueprint = Blueprint(name='ldap', import_name=__name__)
-
-
-@blueprint.before_app_first_request
-def initialise():
-    ldap.set_option(ldap.OPT_DEBUG_LEVEL, toolkit.config['ckanext.ldap.debug_level'])
 
 
 @blueprint.route('/ldap_login_handler', methods=['POST'])
