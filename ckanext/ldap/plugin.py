@@ -12,7 +12,6 @@ from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 from ckanext.ldap import cli, routes
 from ckanext.ldap.lib.helpers import get_login_action, is_ldap_user
 from ckanext.ldap.logic.auth import user_create, user_reset, user_update
-from ckanext.ldap.model.ldap_user import setup as model_setup
 
 log = logging.getLogger(__name__)
 
@@ -72,8 +71,6 @@ class LdapPlugin(SingletonPlugin):
 
         :param config:
         """
-        # Setup our models
-        model_setup()
         # Our own config schema, defines required items, default values and
         # transform functions
         schema = {
