@@ -41,39 +41,19 @@ class LdapPlugin(SingletonPlugin):
     def get_commands(self):
         return cli.get_commands()
 
+    ## IConfigurer
     def update_config(self, config):
         """
         Implement IConfiguer.update_config.
 
-        Add our custom template to the list of templates so we can override the login
-        form.
-
         :param config:
         """
+        # Add our custom template to the list of templates so we can override the login
+        # form.
         toolkit.add_template_directory(config, 'theme/templates')
 
-    ## IBlueprint
-    def get_blueprint(self):
-        return routes.blueprints
-
-    def get_auth_functions(self):
-        """
-        Implements IAuthFunctions.get_auth_functions.
-        """
-        return {
-            'user_update': user_update,
-            'user_create': user_create,
-            'user_reset': user_reset,
-        }
-
-    def configure(self, config):
-        """
-        Implementation of IConfigurable.configure.
-
-        :param config:
-        """
-        # Our own config schema, defines required items, default values and
-        # transform functions
+        # Our own config schema, defines required items, default values and transform
+        # functions
         schema = {
             'ckanext.ldap.uri': {'required': True},
             'ckanext.ldap.base_dn': {'required': True},
@@ -119,24 +99,46 @@ class LdapPlugin(SingletonPlugin):
                 try:
                     if 'validate' in options:
                         (options['validate'])(config_value)
-                    toolkit.config[key] = config_value
+                    config[key] = config_value
                 except ConfigError as e:
                     errors.append(str(e))
             elif options.get('required', False):
-                errors.append('Configuration parameter {0} is required'.format(key))
-            elif 'required_if' in options and options['required_if'] in toolkit.config:
+                errors.append(f'Configuration parameter {key} is required')
+            elif 'required_if' in options and options['required_if'] in config:
                 errors.append(
-                    'Configuration parameter {0} is required '
-                    'when {1} is present'.format(key, options['required_if'])
+                    f'Configuration parameter {key} is required '
+                    f'when {options["required_if"]} is present'
                 )
             elif 'default' in options:
-                toolkit.config[key] = options['default']
+                config[key] = options['default']
 
         if len(errors):
             raise ConfigError('\n'.join(errors))
 
+    ## IBlueprint
+    def get_blueprint(self):
+        return routes.blueprints
+
+    ## IAuthFunctions
+    def get_auth_functions(self):
+        """
+        Implements IAuthFunctions.get_auth_functions.
+        """
+        return {
+            'user_update': user_update,
+            'user_create': user_create,
+            'user_reset': user_reset,
+        }
+
+    ## IConfigurable
+    def configure(self, config):
+        """
+        Implementation of IConfigurable.configure.
+
+        :param config:
+        """
         ldap.set_option(
-            ldap.OPT_DEBUG_LEVEL, toolkit.config['ckanext.ldap.debug_level']
+            ldap.OPT_DEBUG_LEVEL, config['ckanext.ldap.debug_level']
         )
 
     # IAuthenticator
