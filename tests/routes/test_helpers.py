@@ -29,6 +29,7 @@ IS_CKAN_29_OR_LOWER = not IS_CKAN_210_OR_HIGHER
 
 @pytest.mark.skipif(IS_CKAN_210_OR_HIGHER, reason='requires CKAN 2.9 or lower')
 @pytest.mark.filterwarnings('ignore::sqlalchemy.exc.SADeprecationWarning')
+@pytest.mark.usefixtures('clean_db', 'ensure_db_init')
 class TestLoginSuccess29:
     # these tests are only run on CKAN 2.9
 
@@ -56,6 +57,7 @@ class TestLoginSuccess29:
 
 @pytest.mark.skipif(IS_CKAN_29_OR_LOWER, reason='requires CKAN 2.10 or higher')
 @pytest.mark.filterwarnings('ignore::sqlalchemy.exc.SADeprecationWarning')
+@pytest.mark.usefixtures('clean_db', 'ensure_db_init')
 class TestLoginSuccess210:
     # these tests are only run on CKAN 2.10
     @pytest.mark.usefixtures('with_request_context')
