@@ -1,5 +1,28 @@
 # Changelog
 
+## v4.0.0 (2025-03-17)
+
+### Breaking Changes
+
+- switch table creation to alembic
+
+### Fix
+
+- set ldap debug level in plugin setup
+
+### Refactor
+
+- move config validation to update_config
+
+### Style
+
+- reformat line
+
+### Tests
+
+- use clean db for version-dependent tests
+- **fixtures**: shorten db init
+
 ## v3.3.3 (2024-11-04)
 
 ### Docs
