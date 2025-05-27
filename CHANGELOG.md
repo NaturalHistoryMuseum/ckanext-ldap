@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.1.0 (2025-05-27)
+
+### Feature
+
+- add basic error codes for tracking down login issues
+
 ## v4.0.0 (2025-03-17)
 
 ### Breaking Changes
