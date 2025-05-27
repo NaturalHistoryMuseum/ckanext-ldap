@@ -51,7 +51,9 @@ def login_handler():
                             'Username conflict. Please contact the site administrator.'
                         )
                     )
-            return _helpers.login_failed(error=toolkit._('Bad username or password.'))
+            return _helpers.login_failed(
+                error=toolkit._('Bad username or password.') + ' [LDAP1]'
+            )
         elif toolkit.config['ckanext.ldap.ckan_fallback']:
             # No LDAP user match, see if we have a CKAN user match
             try:
@@ -64,10 +66,12 @@ def login_handler():
                 return _helpers.login_success(user.name, came_from=came_from)
             else:
                 return _helpers.login_failed(
-                    error=toolkit._('Bad username or password.')
+                    error=toolkit._('Bad username or password.') + ' [LDAP2]'
                 )
         else:
-            return _helpers.login_failed(error=toolkit._('Bad username or password.'))
+            return _helpers.login_failed(
+                error=toolkit._('Bad username or password.') + ' [LDAP3]'
+            )
     return _helpers.login_failed(
         error=toolkit._('Please enter a username and password')
     )
