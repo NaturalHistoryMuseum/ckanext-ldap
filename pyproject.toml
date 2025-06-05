@@ -68,9 +68,20 @@ version_files = [
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.pylint]
-max-line-length = 88
-disable = ["C0114", "R0903"]
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "D"
+]
+ignore = [
+    "D100",
+    "D200",
+    "D202",
+    "D203",
+    "D212"
+]
 
 [tool.docformatter]
 wrap-summaries = 88
