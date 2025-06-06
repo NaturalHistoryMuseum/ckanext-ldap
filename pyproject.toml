@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "python-ldap==3.4.3",
-    "ckantools>=0.4.1"
+    "ckantools>=0.4.2"
 ]
 
 [project.optional-dependencies]
@@ -65,12 +65,34 @@ version_files = [
     "CITATION.cff:^version"
 ]
 
+[tool.ruff]
+target-version = "py38"
+
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.pylint]
-max-line-length = 88
-disable = ["C0114", "R0903"]
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "D"
+]
+ignore = [
+    "D100",
+    "D104",
+    "D200",
+    "D202",
+    "D203",
+    "D205",
+    "D206",
+    "D212",
+    "D300",
+    "D401",
+    "E111",
+    "E114",
+    "E117"
+]
 
 [tool.docformatter]
 wrap-summaries = 88
