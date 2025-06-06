@@ -65,6 +65,9 @@ version_files = [
     "CITATION.cff:^version"
 ]
 
+[tool.ruff]
+target-version = "py38"
+
 [tool.ruff.format]
 quote-style = "single"
 
@@ -77,10 +80,18 @@ select = [
 ]
 ignore = [
     "D100",
+    "D104",
     "D200",
     "D202",
     "D203",
-    "D212"
+    "D205",
+    "D206",
+    "D212",
+    "D300",
+    "D401",
+    "E111",
+    "E114",
+    "E117"
 ]
 
 [tool.docformatter]
