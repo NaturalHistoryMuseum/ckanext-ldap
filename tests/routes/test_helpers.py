@@ -51,7 +51,7 @@ class TestLoginSuccess29:
         assert response.status_code == 302
 
         assert response.location.endswith(
-            f"{url_for('user.logged_in')}?came_from={came_from}"
+            f'{url_for("user.logged_in")}?came_from={came_from}'
         )
 
 
@@ -87,7 +87,7 @@ class TestLoginSuccess210:
         assert login_user.called
 
         assert response.location.endswith(
-            f"{url_for('home.index')}?came_from={came_from}"
+            f'{url_for("home.index")}?came_from={came_from}'
         )
 
     @pytest.mark.usefixtures('with_request_context')
