@@ -53,6 +53,7 @@ exclude = ["tests", "docs"]
 
 [tool.setuptools.package-data]
 "ckanext.ldap.theme" = ["*", "**/*"]
+"ckanext.ldap.migration" = ["*", "**/*"]
 
 [tool.commitizen]
 name = "cz_nhm"
