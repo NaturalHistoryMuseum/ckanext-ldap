@@ -61,13 +61,19 @@ class LdapUser(model.domain_object.DomainObject):
         return obj
 
 
-model.meta.mapper(
-    LdapUser,
-    ldap_user_table,
-    properties={
-        'user': orm.relation(
-            model.user.User,
-            backref=orm.backref('ldap_user', cascade='all, delete, delete-orphan'),
-        )
-    },
-)
+_mapper_properties = {
+    'user': orm.relationship(
+        model.user.User,
+        backref=orm.backref('ldap_user', cascade='all, delete, delete-orphan'),
+    )
+}
+
+# CKAN 2.11+ exposes a registry and CKAN 2.12 runs on SQLAlchemy 2, where the
+# classical orm.mapper() behind meta.mapper is removed. Older CKAN has no
+# registry, so keep the classical call there.
+if hasattr(model.meta, 'registry'):
+    model.meta.registry.map_imperatively(
+        LdapUser, ldap_user_table, properties=_mapper_properties
+    )
+else:
+    model.meta.mapper(LdapUser, ldap_user_table, properties=_mapper_properties)
