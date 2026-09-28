@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.1.3 (2026-09-28)
+
+### Fix
+
+- **model**: map LdapUser without the SQLAlchemy 1 APIs removed in 2.0
+
 ## v4.1.2 (2025-08-11)
 
 ### Build System(s)
