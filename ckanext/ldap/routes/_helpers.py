@@ -93,7 +93,6 @@ def login_success(user_name, came_from):
 
     # Update the session & redirect
     session['ckanext-ldap-user'] = user_name
-    session.save()
     return toolkit.redirect_to(redirect_path, came_from=came_from)
 
 
