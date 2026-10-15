@@ -12,7 +12,7 @@ jobs:
     if: "!startsWith(github.event.head_commit.message, 'bump:')"
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           fetch-depth: 0
@@ -23,7 +23,7 @@ jobs:
           changelog_increment_filename: CURRENT.md
           extra_requirements: "cz-nhm"
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           body_path: "CURRENT.md"
           tag_name: v${{ env.REVISION }}
