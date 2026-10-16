@@ -7,15 +7,27 @@ on:
     types: [opened, edited, reopened, synchronize]
 
 jobs:
-  test:
-    name: Run tests
+  test_latest:
+    name: Run tests against ckantest latest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v7
       - name: Build images
         run: docker compose build
-      - name: Run tests
+      - name: Run tests against latest
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: docker compose run -e COVERALLS_REPO_TOKEN ckan bash /opt/scripts/run-tests.sh -c ckanext.ldap
+        run: docker compose run -e COVERALLS_REPO_TOKEN latest bash /opt/scripts/run-tests.sh -c ckanext.ldap
+  test_next:
+    name: Run tests against ckantest next
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v7
+      - name: Build images
+        run: docker compose build
+      - name: Run tests against next
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: docker compose run -e COVERALLS_REPO_TOKEN next bash /opt/scripts/run-tests.sh -c ckanext.ldap
