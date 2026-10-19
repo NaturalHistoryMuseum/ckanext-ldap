@@ -40,8 +40,8 @@ This repository contains the code for an extension/plugin for a larger system ca
 This extension and [several others](https://github.com/search?q=topic:ckan+org:NaturalHistoryMuseum&type=repositories) are maintained by the Data Portal team at the Natural History Museum, London. This is a very small team, so contributions are very welcome!
 
 The current core team consists of:
-- Josh ([@jrdh](https://github.com/jrdh)) - Technical Lead
-- Ginger ([@alycejenni](https://github.com/alycejenni)) - Senior Software Engineer
+- Ginger ([@alycejenni](https://github.com/alycejenni)) - Technical Lead
+- Andrew ([@AndrewRoberts1](https://github.com/AndrewRoberts1)) - Senior Software Engineer
 
 
 ## Questions

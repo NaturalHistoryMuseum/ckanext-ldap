@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check commit message format
-        uses: webiny/action-conventional-commits@v1.3.0
+        uses: webiny/action-conventional-commits@v1.4.2
         with:
           allowed-commit-types: 'feat,fix,refactor,perf,docs,style,test,build,ci,chore,new,patch,revert,ui,merge'
   pre-commit:
@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
