@@ -19,7 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8"
 ]
 dependencies = [
-    "python-ldap==3.4.3",
+    "python-ldap==3.4.5",
     "ckantools>=0.4.2"
 ]
 
