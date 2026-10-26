@@ -36,9 +36,10 @@ def login_failed(notice=None, error=None):
 
 def login_success(user_name, came_from):
     """
-    Handle login success. Behavior depends on CKAN version.
+    Handle login success.
 
-    The CKAN version is tested via ckan.plugins.toolkit.check_ckan_version().
+    Behavior depends on CKAN version.     The CKAN version is tested via
+    ckan.plugins.toolkit.check_ckan_version().
 
     CKAN < 2.10.0:     Saves user_name in the session under the 'ckanext-ldap-user' key,
     then redirects to /user/logged_in.

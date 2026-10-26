@@ -22,8 +22,7 @@ def get_login_action():
     """
     Returns ldap login handler.
 
-    Preserves parameter `came_from` as stored in context object's
-    login_handler.
+    Preserves parameter `came_from` as stored in context object's login_handler.
     """
     if hasattr(toolkit.c, 'login_handler'):
         came_from = parse_qs(urlparse(toolkit.c.login_handler).query).get('came_from')
