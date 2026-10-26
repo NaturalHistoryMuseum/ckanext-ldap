@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.1.4 (2026-10-26)
+
+### Refactor
+
+- run pre-commit and refactor all files
+
+### CI System(s)
+
+- update pre-commit config
+- restore ldap specific tests with updated actions
+- update action versions update the actions to the latest versions
+
+### Chores/Misc
+
+- update team names
+
 ## v4.1.3 (2026-09-28)
 
 ### Fix
