@@ -1,7 +1,7 @@
 exclude: /(vendor|dist)/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: detect-private-key
@@ -11,18 +11,18 @@ repos:
         exclude: ^tests/helpers/
       - id: trailing-whitespace
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.8.2
+    rev: v4.19.3
     hooks:
       - id: commitizen
         additional_dependencies: ['cz-nhm']
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.12
+    rev: v0.17.2
     hooks:
       - id: ruff
         args: [ '--fix', '--select', 'I', '--select', 'F401', '--fix-only' ]
       - id: ruff-format
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.7
+    rev: v1.7.8
     hooks:
       - id: docformatter
         args: [ '-i', '--config', './pyproject.toml' ]
