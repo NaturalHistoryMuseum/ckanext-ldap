@@ -31,6 +31,11 @@ def find_ldap_user(login):
     cnx.set_option(ldap.OPT_NETWORK_TIMEOUT, 10)
     if toolkit.config['ckanext.ldap.ignore_referrals']:
         cnx.set_option(ldap.OPT_REFERRALS, 0)
+    if toolkit.config.get('ckanext.ldap.cacert') is not None:
+        cnx.protocol_version = ldap.VERSION3
+        cnx.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_DEMAND)
+        cnx.set_option(ldap.OPT_X_TLS_CACERTFILE, toolkit.config['ckanext.ldap.cacert'])
+        cnx.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
 
     if toolkit.config.get('ckanext.ldap.auth.dn'):
         try:
