@@ -47,7 +47,6 @@ class TestLoginSuccess29:
         # check the username was put in the session
         mock_session.__setitem__.assert_called_once_with('ckanext-ldap-user', username)
 
-        assert mock_session.save.called
         assert response.status_code == 302
 
         assert response.location.endswith(
@@ -81,7 +80,6 @@ class TestLoginSuccess210:
         # check the username was put in the session
         mock_session.__setitem__.assert_called_once_with('ckanext-ldap-user', username)
 
-        assert mock_session.save.called
         assert response.status_code == 302
 
         assert login_user.called
@@ -111,7 +109,6 @@ class TestLoginSuccess210:
         flash_error_mock.assert_called_once()
         # check the username was not put in the session
         assert not mock_session.__setitem__.called
-        assert not mock_session.save.called
         assert not login_user.called
         assert response.status_code == 302
         assert response.location.endswith(url_for('user.login'))
@@ -137,7 +134,6 @@ class TestLoginSuccess210:
         flash_error_mock.assert_called_once()
         # check the username was not put in the session
         assert not mock_session.__setitem__.called
-        assert not mock_session.save.called
         assert not login_user.called
         assert response.status_code == 302
         assert response.location.endswith(url_for('user.login'))
@@ -161,7 +157,6 @@ class TestLoginSuccess210:
         flash_error_mock.assert_called_once()
         # check the username was not put in the session
         assert not mock_session.__setitem__.called
-        assert not mock_session.save.called
         assert not login_user.called
         assert response.status_code == 302
         assert response.location.endswith(url_for('user.login'))

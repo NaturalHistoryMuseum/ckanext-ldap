@@ -181,7 +181,6 @@ class LdapPlugin(SingletonPlugin):
         """
         if 'ckanext-ldap-user' in session:
             del session['ckanext-ldap-user']
-            session.save()
 
     def get_helpers(self):
         return {'is_ldap_user': is_ldap_user, 'get_login_action': get_login_action}
