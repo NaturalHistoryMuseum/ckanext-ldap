@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.2.0 (2026-11-27)
+
+### Feature
+
+- allow providing ca cert files
+
+### Docs
+
+- add cacert option to readme
+
 ## v4.1.4 (2026-10-26)
 
 ### Refactor
